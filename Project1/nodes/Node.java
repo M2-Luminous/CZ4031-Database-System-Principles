@@ -111,7 +111,7 @@ public abstract class Node {
     //delete node
     public void deleteNode() {
         if(parent != null) {
-            parent.deleteChild(this);
+            parent.deleteOneChild(this);
             parent = null;
         }
 
@@ -122,7 +122,7 @@ public abstract class Node {
         }
         else {
             parentNode node = (parentNode) this;
-            node.deleteChildren();
+            node.deleteAllChildren();
         }
 
         isLeaf = false;
@@ -130,5 +130,5 @@ public abstract class Node {
         keys = new ArrayList<Integer>();
     }
 
-    abstract void logStructure();
+    //abstract void logStructure();
 }
