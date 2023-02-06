@@ -1,4 +1,4 @@
-package Project1.app;
+package app;
 
 public class mainapp {
     

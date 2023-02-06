@@ -1,4 +1,4 @@
-package Project1.dataOutput;
+package dataOutput;
 
 public class disk {
     

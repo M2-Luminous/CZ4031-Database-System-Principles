@@ -1,4 +1,4 @@
-package Project1.log_analyze;
+package log_analyze;
 
 public class log {
     

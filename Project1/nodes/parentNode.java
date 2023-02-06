@@ -1,4 +1,4 @@
-package Project1.nodes;
+package nodes;
 
 //import app.util.Log;
 import java.util.ArrayList;
@@ -116,5 +116,5 @@ public class parentNode extends Node{
         sb.append("]");
         return sb.toString();
     }
-    
+
 }

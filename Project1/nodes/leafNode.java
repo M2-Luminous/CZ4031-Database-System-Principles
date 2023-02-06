@@ -1,4 +1,4 @@
-package Project1.nodes;
+package nodes;
 
 import Project1.storage.Address;
 import Project1.util.Log;

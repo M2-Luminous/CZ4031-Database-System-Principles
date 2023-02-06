@@ -1,4 +1,4 @@
-package Project1.nodes;
+package nodes;
 
 import java.util.ArrayList;
 
