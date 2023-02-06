@@ -26,4 +26,69 @@ public class leafNode extends Node{
     public Address getRecord(int index) {
         return records.get(index);
     }
+
+    //add record
+    public int addRecord(int key, Address address) {
+        if(this.getRecord().size() == 0){
+            this.records.add(address);
+            this.addKey(key);
+            return 0;
+        }
+
+        int index = super.addKey(key);
+        records.add(address);
+
+        for(int i = records.size() - 2; i >= index; i--){
+            records.set(i + 1, records.get(i));
+        }
+
+        records.set(index,address);
+
+        return index;
+    }
+
+    //get next leaf node
+    public leafNode getNext() {
+        return next;
+    }
+
+    //get next leaf node
+    public void setNext(leafNode sister){
+        next = sister;
+    }
+
+    //splitting leafNode
+    public void splitPrep() {
+        deleteAllKey();
+        records = new ArrayList<Address>();
+    }
+
+    //deleting one record
+    public void deleteOneRecord(int index) {
+        deleteOneKey(index);
+        records.remove(index);
+    }
+
+    //deleting all records
+    public void deleteAllRecord() {
+        records = new ArrayList<Address>();
+    }
+
+    @Override
+    void logStructure() {
+        Log.d(TAG, this.toString());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < getKeys().size(); i ++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+             sb.append(String.format("%d:{%d=>%s}" , i , getKey(i) , getRecord(i)));
+        }
+        sb.append("]");
+        return sb.toString();
+    }    
 }
