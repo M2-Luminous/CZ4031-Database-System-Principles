@@ -177,7 +177,7 @@ public class bPlusTree {
             children[i + 1] = children[i];
         }
 
-        //cleaning old parent values
+        //cleaning old parent nodes
         parent.splitPrep();
 
         //putting children into two parent nodes
@@ -207,5 +207,107 @@ public class bPlusTree {
 
         //update node count
         nodeCount ++;
+    }
+
+    //delete a key's record
+    public void deleteKey(int key) {
+        ArrayList<Integer> keys;
+        leafNode leaf;
+
+        //search remaining record of target node
+        while(getRecordsWithKey(key, false).size() != 0) {
+            leaf = searchLeafNode(key);
+            keys = leaf.getAllKey();
+
+            //deleting one record
+            for(int i = 0; i < keys.size(); i++) {
+                if(keys.get(i) == key) {
+                    leaf.deleteOneRecord(i);
+
+                    //if leaf node is not a root then update tree
+                    if(!leaf.getIsRoot()) {
+                        resetLeaf(leaf);
+                    }
+                    break;
+                }
+            }
+        }
+        Log.d("deletion", "number of nodes deleted = " + deleteCount);
+        
+        //update node count
+        nodeCount -= deleteCount;
+        
+        treeStats();
+    }
+
+    //reset leaf node
+    public void resetLeaf(leafNode node) {
+        if(node.getAllKey().size() >= leafMinKeys) {
+            resetParent(node.getParent());
+            return;
+        }
+
+        leafNode former = (leafNode) node.getParent().getFormer(node);
+        leafNode latter = (leafNode) node.getParent().getLatter(node);
+        int space = leafMinKeys - node.getAllKey().size();
+        int formerSpare = 0;
+        int latterSpare = 0;
+        parentNode PARENT;
+
+        //getting number of keys that before the nodes can spare
+        if(former != null){
+            formerSpare += former.getAllKey().size() - leafMinKeys;
+        }
+
+         //getting number of keys that after the nodes can spare
+         if(latter != null){
+            latterSpare += latter.getAllKey().size() - leafMinKeys;
+        }
+
+        //if merge
+        if(space > formerSpare + latterSpare) {
+
+            //if node has former nodes and latter nodes
+            if(former != null && latter != null) {
+                //insert maximum records into former node
+                for(int i = 0; i < maxKeys - (formerSpare + leafMinKeys); i ++) {
+                    former.addRecord(node.getOneKey(i), node.getOneRecord(i));
+                }
+                //insert the remaining records into latter node
+                for(int i = maxKeys - (formerSpare + leafMinKeys); i < node.getAllKey().size(); i ++) {
+                    latter.addRecord(node.getOneKey(i), node.getOneRecord(i));
+                }
+            }
+            //if node has latter node only
+            else if(former == null) {
+                for(int i = maxKeys - (formerSpare + leafMinKeys); i < node.getAllKey().size(); i ++) {
+                    latter.addRecord(node.getOneKey(i), node.getOneRecord(i));
+                }
+            }
+            else if(latter == null) {
+                for(int i = 0; i < maxKeys - (formerSpare + leafMinKeys); i ++) {
+                    former.addRecord(node.getOneKey(i), node.getOneRecord(i));
+                }
+            }
+
+            PARENT = node.getParent();
+
+            //look for the former node if they don't share same parent
+            if(former == null) {
+                if(!PARENT.getIsRoot()) {
+                    former = searchLeafNode(PARENT.findSmallestKey() - 1);
+                }
+            }
+            //update link
+            former.setNext(node.getNext());
+            //delete old node
+            node.deleteNode();
+            //update count
+            deleteCount ++;
+        }
+        //if borrow keys
+        else{
+            
+        }
     }
 }
