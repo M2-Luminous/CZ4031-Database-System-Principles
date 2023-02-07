@@ -45,18 +45,18 @@ public abstract class Node {
     }
 
     //get all keys
-    public ArrayList<Integer> getKeys() {
+    public ArrayList<Integer> getAllKey() {
         return keys;
     }
 
     //get key at index
-    public int getKey(int index) {
+    public int getOneKey(int index) {
         return keys.get(index);
     }
 
     //add key
     public int addKey(int key) {
-        if(this.getKeys().size() == 0){
+        if(this.getAllKey().size() == 0){
             this.keys.add(key);
             return 0;
         }
@@ -100,10 +100,10 @@ public abstract class Node {
             while(!node.getChild(0).getIsLeaf()) {
                 node = (parentNode) node.getChild(0);
             }
-            key = node.getChild(0).getKey(0);
+            key = node.getChild(0).getOneKey(0);
         }
         else {
-            key = this.getKey(0);
+            key = this.getOneKey(0);
         }
         return key;
     }

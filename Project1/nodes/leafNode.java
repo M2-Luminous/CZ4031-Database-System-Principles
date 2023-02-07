@@ -13,23 +13,23 @@ public class leafNode extends Node{
     public leafNode() {
         super();
         records = new ArrayList<Address>();
-        setLeaf(true);
+        setIsLeaf(true);
         setNext(null);
     }
 
     //record at arraylist
-    public ArrayList<Address> getRecords() {
+    public ArrayList<Address> getAllRecord() {
         return records;
     }
 
     //record at index
-    public Address getRecord(int index) {
+    public Address getOneRecord(int index) {
         return records.get(index);
     }
 
     //add record
     public int addRecord(int key, Address address) {
-        if(this.getRecord().size() == 0){
+        if(this.getOneRecord().size() == 0){
             this.records.add(address);
             this.addKey(key);
             return 0;
@@ -82,11 +82,11 @@ public class leafNode extends Node{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < getKeys().size(); i ++) {
+        for (int i = 0; i < getAllKey().size(); i ++) {
             if (i > 0) {
                 sb.append(", ");
             }
-             sb.append(String.format("%d:{%d=>%s}" , i , getKey(i) , getRecord(i)));
+             sb.append(String.format("%d:{%d=>%s}" , i , getOneKey(i) , getOneRecord(i)));
         }
         sb.append("]");
         return sb.toString();
