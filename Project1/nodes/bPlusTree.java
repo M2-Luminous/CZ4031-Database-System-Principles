@@ -284,6 +284,7 @@ public class bPlusTree {
                     latter.addRecord(node.getOneKey(i), node.getOneRecord(i));
                 }
             }
+            //if node has former node only
             else if(latter == null) {
                 for(int i = 0; i < maxKeys - (formerSpare + leafMinKeys); i ++) {
                     former.addRecord(node.getOneKey(i), node.getOneRecord(i));
@@ -307,7 +308,137 @@ public class bPlusTree {
         }
         //if borrow keys
         else{
-            
+            if(former != null & latter != null) {
+                //find the last few keys from former node that can be spared
+                for(int i = 0; i < formerSpare; i ++) {
+                    node.addRecord(former.getOneKey(former.getAllKey().size() - 1 - i), former.getOneRecord(former.getAllKey().size()-1 -i));
+                    former.deleteOneRecord(former.getAllKey().size() - 1 - i);;
+                }
+                //find the rest keys from latter node
+                for(int i = formerSpare, j = 0; i < space; i ++, j ++) {
+                    node.addRecord(latter.getOneKey(j), latter.getOneRecord(j));
+                    latter.deleteOneRecord(j);
+                }
+            }
+            else if(former == null) {
+                //add them all from latter node
+                for(int i = 0; i < space; i ++) {
+                    node.addRecord(latter.getOneKey(i), latter.getOneRecord(i));
+                    latter.deleteOneRecord(i);
+                }
+            }
+            else if(latter == null) {
+                //add them all from former node
+                for(int i = 0; i < space; i ++) {
+                    node.addRecord(former.getOneKey(i), former.getOneRecord(i));
+                    former.deleteOneRecord(former.getAllKey().size() - 1 - i);
+                }
+            }
+            PARENT = node.getParent();
         }
+        //update parents
+        resetParent(PARENT);
+    }
+
+    public void resetParent(parentNode parent) {
+        //if node is root itself
+        if(parent.getIsRoot()) {
+            //if root has at least 2 children
+            if(parent.getChildren().size() > 1) {
+                Node child = parent.getChild(0);
+                parent.deleteOneChild(child);
+                parent.addChild(child);
+                return;
+            }
+            //if root has only 1 chld
+            else {
+                parent.getChild(0).setIsRoot(true);
+                root = parent.getChild(0);
+                parent.deleteNode();
+                //update count
+                deleteCount ++;
+                //update height
+                height -- ;
+                return;
+            }
+        }
+
+        parentNode former = (parentNode) parent.getParent().getFormer(parent);
+        parentNode latter = (parentNode) parent.getParent().getLatter(parent);
+        int space = parentMinKeys - parent.getAllKey().size();
+        int formerSpare = 0;
+        int latterSpare = 0;
+        parentNode PARENT;
+
+        if(former != null) {
+            formerSpare += former.getAllKey().size() - parentMinKeys;
+        }
+        if(latter != null) {
+            latterSpare += latter.getAllKey().size() - parentMinKeys;
+        }
+
+        //if merge
+        if(space > formerSpare + latterSpare) {
+
+            //if node has former nodes and latter nodes
+            if(former != null && latter != null) {
+                //insert maximum records into former node
+                for(int i = 0; i < maxKeys - (formerSpare + parentMinKeys) + 1 && i < parent.getChildren().size(); i ++) {
+                    former.addChild(parent.getChild(i));
+                }
+                //insert the remaining records into latter node
+                for(int i = maxKeys - (formerSpare + parentMinKeys) + 1; i < parent.getChildren().size(); i ++) {
+                    latter.addChild(parent.getChild(i));
+                }
+            }
+            //if node has latter node only
+            else if(former == null) {
+                for(int i = 0; i < parent.getChildren().size(); i ++) {
+                    latter.addChild(parent.getChild(i));
+                }
+            }
+            //if node has former node only
+            else if(latter == null) {
+                for(int i = 0; i < parent.getChildren().size(); i ++) {
+                    former.addChild(parent.getChild(i));
+                }
+            }
+
+            PARENT = parent.getParent();
+            parent.deleteNode();
+            //update count
+            deleteCount ++;
+        }
+        else{
+            if(former != null & latter != null) {
+                //find the last few keys from former node that can be spared
+                for(int i = 0; i < formerSpare && i < space; i ++) {
+                    parent.addChild(former.getChild(former.getChildren().size() - 1) , 0);
+                    former.deleteOneChild(former.getChild(former.getChildren().size() - 1));
+                }
+                //find the rest keys from latter node
+                for(int i = formerSpare; i < space; i ++) {
+                    parent.addChild(latter.getChild(0));
+                    latter.deleteOneChild(latter.getChild(0));
+                }
+            }
+            else if(former == null) {
+                //add them all from latter node
+                for(int i = 0; i < space; i ++) {
+                    parent.addChild(latter.getChild(0));
+                    latter.deleteOneChild(latter.getChild(0));
+                }
+            }
+            else if(latter == null) {
+                //add them all from former node
+                for(int i = 0; i < space; i ++) {
+                    parent.addChild(former.getChild(former.getChildren().size() - 1 - i) , 0);
+                    former.deleteOneChild(former.getChild(former.getChildren().size() - 1 - i));
+                }
+            }
+            PARENT = parent.getParent();
+        }
+        //update parents
+        resetParent(PARENT);
     }
 }
