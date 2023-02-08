@@ -441,4 +441,207 @@ public class bPlusTree {
         //update parents
         resetParent(PARENT);
     }
+
+    public ArrayList<Address> getRecordsWithKey(int key) {
+        return getRecordsWithKey(key, true);
+    }
+
+    public ArrayList<Address> getRecordsWithKey(int key, boolean isVer) {
+        ArrayList<Address> result = new ArrayList<>();
+        int block = 1;
+        int sibling = 0;
+        if(isVer) {
+            Log.d("B+Tree.keySearch" , "[Node Access] Access root node");
+        }
+        Node node = root;
+        parentNode PARENT;
+        //search for leaf node with key
+        while(!node.getIsLeaf()) {
+            PARENT = (parentNode) node;
+            for(int i = 0; i < PARENT.getAllKey().size(); i++) {
+                if(key <= PARENT.getOneKey(i)) {
+                    if(isVer) {
+                        Log.v("B+Tree.keySearch" , node.toString());
+                        Log.d("B+Tree.keySearch" , String.format("[Node Access] follow pointer [%d]: key(%d)<=curKey(%d)", i, key, PARENT.getOneKey(i)));
+                    }
+                    node = PARENT.getChild(i);
+                    block ++;
+                    break;
+                }
+                if(i == PARENT.getAllKey().size() - 1) {
+                    if(isVer) {
+                        Log.v("B+Tree.keySearch", node.toString());
+                        Log.d("B+Tree.keySearch",String.format("[Node Access] follow pointer [%d+1]: last key and key(%d)>curKey(%d)", i, key, PARENT.getOneKey(i) ));
+                    }
+                    node = PARENT.getChild(i + 1);
+                    block ++;
+                    break;
+                }
+            }
+        }
+        //after leaf node is discoverd, find out all records of same keys
+        leafNode LEAF = (leafNode) node;
+        boolean check = false;
+        while(!check && LEAF != null) {
+            //find same keys in leaf node
+            for(int i = 0; i < LEAF.getAllKey().size(); i ++) {
+                //if founded, add into result list
+                if(LEAF.getOneKey(i) == key) {
+                    result.add(LEAF.getOneRecord(i));
+                    continue;
+                }
+                //if current key > searching key, then stop searching
+                if(LEAF.getOneKey(i) > key) {
+                    check = true;
+                    break;
+                }
+            }
+            if(!check) {
+                //check whether sibling node has same key's record or not
+                if(LEAF.getNext() != null) {
+                    LEAF = LEAF.getNext();
+                    block ++;
+                    sibling ++;
+                } 
+                else {
+                    break;
+                }
+            }
+        }
+        if(sibling > 0) {
+            if(isVer) {
+                Log.d("B+Tree.keySearch", "[Node Access] " + sibling + " sibling node access");
+            }
+        }
+        if(isVer) {
+            Log.i("B+Tree.keySearch", String.format("input(%d): %d records found with %d node access", key, result.size(), block));
+        }
+        return result;
+    }
+
+    public void treeStats() {
+        ArrayList<Integer> rootKey = new ArrayList<Integer>();
+        ArrayList<Integer> headKey = new ArrayList<Integer>();
+        parentNode ROOT = (parentNode) root;
+        Node head = ROOT.getChild(0);
+
+        for(int i = 0; i < root.getAllKey().size(); i++) {
+            rootKey.add(root.getOneKey(i));
+        }
+        for(int i = 0; i < head.getAllKey().size(); i ++) {
+            headKey.add(head.getOneKey(i));
+        }
+
+        Log.d("treeStats", "n = " + maxKeys + ", number of nodes = " + nodeCount + ", height = " + height);
+        Log.d("rootContents", "root node contents = " + rootKey);
+        Log.d("firstContents", "first child contents = " + headKey);
+    }
+
+    public ArrayList<Address> getRecordsWithKeyInRange(int min, int max) {
+        return getRecordsWithKeyInRange(min, max, true);
+    }
+
+    public ArrayList<Address> getRecordsWithKeyInRange(int min, int max, boolean isVer) {
+        ArrayList<Address> result = new ArrayList<>();
+        int nodeAccess = 1;
+        int siblingAccess = 0;
+        if(isVer) {
+            Log.d("B+Tree.rangeSearch", "[Node Access] Access root node");
+        }
+        Node node = root;
+        parentNode PARENT;
+        //search for leaf node with key
+        while(!node.getIsLeaf()) {
+            PARENT = (parentNode) node;
+            for(int i = 0; i < PARENT.getAllKey().size(); i ++) {
+                if(min <= PARENT.getOneKey(i)) {
+                    if(isVer) {
+                        Log.v("B+Tree.rangeSearch", node.toString());
+                        Log.d("B+Tree.rangeSearch", String.format("[Node Access] follow pointer [%d]: min(%d)<=curKey(%d)", i, min, PARENT.getOneKey(i)));
+                    }
+                    node = PARENT.getChild(i);
+                    nodeAccess ++;
+                    break;
+                }
+                if(i == PARENT.getAllKey().size() - 1) {
+                    if(!isVer) {
+                        if (isVer) {
+                            Log.v("B+Tree.rangeSearch", node.toString());
+                            Log.d("B+Tree.rangeSearch", String.format("[Node Access] follow pointer [%d+1]: last key and min(%d)>curKey(%d)", i, min, PARENT.getOneKey(i)));
+                        }
+                    }
+                    node = PARENT.getChild(i + 1);
+                    nodeAccess ++;
+                    break;
+                }
+            }
+        }
+        //after leaf node is found, find all records with same key
+        leafNode LEAF = (leafNode) node;
+        boolean check = false;
+        while(!check && LEAF != null) {
+            //search for same keys and add them into result list
+            for(int i = 0; i < LEAF.getAllKey().size(); i ++) {
+                if(LEAF.getOneKey(i) >= min && LEAF.getOneKey(i) <= max) {
+                    result.add(LEAF.getOneRecord(i));
+                    continue;
+                }
+                if(LEAF.getOneKey(i) > max) {
+                    check = true;
+                    break;
+                }
+            }
+            if(!check) {
+                //check whether sibling node has remaining records of same key or not
+                if(LEAF.getNext() != null) {
+                    LEAF = (leafNode) LEAF.getNext();
+                    nodeAccess ++;
+                    siblingAccess ++; 
+                }
+                else {
+                    break;
+                }
+            }
+        }
+        if (siblingAccess > 0){
+            if (isVer) {
+                Log.d("B+Tree.rangeSearch", "[Node Access] " + siblingAccess + " sibling node access");
+            }
+        }
+        if (isVer) {
+            Log.i("B+Tree.rangeSearch", String.format("input(%d, %d): %d records found with %d node access", min, max, result.size(), nodeAccess));
+        }
+        return result;
+    }
+
+    public ArrayList<Address> removeRecordsWithKey() {
+        return null;
+    }
+
+    public void logStructure(){
+        logStructure(0 , Integer.MAX_VALUE , root);
+    }
+
+    public void logStructure(int maxLevel){
+        logStructure(0 , maxLevel, root);
+    }
+
+    private void logStructure(int level, int maxLevel, Node node) {
+        if(node == null) {
+            node = root;
+        }
+        if(level > maxLevel) {
+            return;
+        }
+
+        System.out.print("h = " + level + " ; ");
+        node.logStructure();
+        if(node.getIsLeaf()) {
+            return;
+        }
+        parentNode PARENT = (parentNode) node;
+        for(Node child : PARENT.getChildren()) {
+            logStructure(level + 1, maxLevel, child);
+        } 
+    }
 }
