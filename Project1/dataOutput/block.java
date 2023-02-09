@@ -1,5 +1,7 @@
 package Project1.dataOutput;
 
+import java.util.Arrays;
+
 public class block {
     private int max_num_records;
     public int current_num_records;
@@ -11,5 +13,15 @@ public class block {
         this.all_records=new entry[this.max_num_records];
     }
 
+    public boolean checkinsert(){
+        return this.max_num_records>=this.current_num_records;
+    }
 
+    public int insertrecord(){
+
+    }
+
+    public deleterecord(){
+        
+    }
 }
