@@ -32,4 +32,7 @@ public class entry {
     public void setaverageRating(String new_tconst){
         this.tconst=new_tconst;
     }
+    public void printentry(){
+        System.out.printf("tconst: %s, numVotes: %d, averageRating: %f%n",this.tconst,this.numVotes,this.averageRating);
+    }
 }
