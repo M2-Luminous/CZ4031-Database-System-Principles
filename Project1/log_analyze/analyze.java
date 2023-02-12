@@ -7,7 +7,7 @@ public class analyze {
     public static int maxTconstLen = Integer.MAX_VALUE;
     public static float maxAverageRating = Float.MAX_VALUE;
     public static int maxNumVotes = Integer.MAX_VALUE;
-    public void analyzeValue (Record record) {
+    public static void analyzeValue (Record record) {
         if (record.gettconst().length < minTconstLen){
             minTconstLen = record.gettconst().length;
         }
