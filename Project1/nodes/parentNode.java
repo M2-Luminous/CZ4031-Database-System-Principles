@@ -1,6 +1,6 @@
 package nodes;
 
-//import app.util.Log;
+import app.utility.log;
 import java.util.ArrayList;
 
 public class parentNode extends Node{
@@ -101,7 +101,7 @@ public class parentNode extends Node{
 
     @Override
     void logStructure() {
-        Log.d(TAG, this.toString());
+        log.d(TAG, this.toString());
     }
 
     @Override

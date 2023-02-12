@@ -1,7 +1,7 @@
 package nodes;
 
-//import app.storage.Address;
-//import app.util.Log;
+import dataOutput.address;
+import app.utility.log;
 import java.util.ArrayList;
 
 
@@ -25,8 +25,8 @@ public class bPlusTree {
         parentMinKeys = (int) Math.floor(maxKeys/2);                           //divides 2 and rounds down 
         leafMinKeys = (int) Math.floor((maxKeys+1)/2);
         
-        Log.i(TAG, "initial : blockSize = " + blockSize + ", maxKey = " + maxKeys);
-        Log.i(TAG, "minKeys : parent = " + parentMinKeys + ", leaf = " + leafMinKeys);
+        log.i(TAG, "initial : blockSize = " + blockSize + ", maxKey = " + maxKeys);
+        log.i(TAG, "minKeys : parent = " + parentMinKeys + ", leaf = " + leafMinKeys);
 
         root = createFirst();
         nodeCount = 0;
@@ -43,7 +43,7 @@ public class bPlusTree {
     }
 
     //insert a record into b plus tree
-    public void insert(int key, Address address) {
+    public void insert(int key, address address) {
         this.insertToLeaf(this.searchLeafNode(key), key, address);
     }
 
@@ -81,7 +81,7 @@ public class bPlusTree {
     }
 
     //insert record to leaf node
-    public void insertToLeaf(leafNode leaf, int key, Address address) {
+    public void insertToLeaf(leafNode leaf, int key, address address) {
         if(leaf.getAllKey().size() < maxKeys) {
             leaf.addRecord(key, address);
         }
@@ -91,9 +91,9 @@ public class bPlusTree {
     }
 
     //split a full leaf node
-    public void splitLeaf(leafNode old, int key, Address address) {
+    public void splitLeaf(leafNode old, int key, address address) {
         int keys[] = new int[maxKeys + 1];
-        Address addresses[] = new Address[maxKeys + 1];
+        address addresses[] = new address[maxKeys + 1];
         leafNode LEAF = new leafNode();
         int i;
 
@@ -232,7 +232,7 @@ public class bPlusTree {
                 }
             }
         }
-        Log.d("deletion", "number of nodes deleted = " + deleteCount);
+        log.d("deletion", "number of nodes deleted = " + deleteCount);
         
         //update node count
         nodeCount -= deleteCount;
@@ -442,16 +442,16 @@ public class bPlusTree {
         resetParent(PARENT);
     }
 
-    public ArrayList<Address> getRecordsWithKey(int key) {
+    public ArrayList<address> getRecordsWithKey(int key) {
         return getRecordsWithKey(key, true);
     }
 
-    public ArrayList<Address> getRecordsWithKey(int key, boolean isVer) {
-        ArrayList<Address> result = new ArrayList<>();
+    public ArrayList<address> getRecordsWithKey(int key, boolean isVer) {
+        ArrayList<address> result = new ArrayList<>();
         int block = 1;
         int sibling = 0;
         if(isVer) {
-            Log.d("B+Tree.keySearch" , "[Node Access] Access root node");
+            log.d("B+Tree.keySearch" , "[Node Access] Access root node");
         }
         Node node = root;
         parentNode PARENT;
@@ -461,8 +461,8 @@ public class bPlusTree {
             for(int i = 0; i < PARENT.getAllKey().size(); i++) {
                 if(key <= PARENT.getOneKey(i)) {
                     if(isVer) {
-                        Log.v("B+Tree.keySearch" , node.toString());
-                        Log.d("B+Tree.keySearch" , String.format("[Node Access] follow pointer [%d]: key(%d)<=curKey(%d)", i, key, PARENT.getOneKey(i)));
+                        log.v("B+Tree.keySearch" , node.toString());
+                        log.d("B+Tree.keySearch" , String.format("[Node Access] follow pointer [%d]: key(%d)<=curKey(%d)", i, key, PARENT.getOneKey(i)));
                     }
                     node = PARENT.getChild(i);
                     block ++;
@@ -470,8 +470,8 @@ public class bPlusTree {
                 }
                 if(i == PARENT.getAllKey().size() - 1) {
                     if(isVer) {
-                        Log.v("B+Tree.keySearch", node.toString());
-                        Log.d("B+Tree.keySearch",String.format("[Node Access] follow pointer [%d+1]: last key and key(%d)>curKey(%d)", i, key, PARENT.getOneKey(i) ));
+                        log.v("B+Tree.keySearch", node.toString());
+                        log.d("B+Tree.keySearch",String.format("[Node Access] follow pointer [%d+1]: last key and key(%d)>curKey(%d)", i, key, PARENT.getOneKey(i) ));
                     }
                     node = PARENT.getChild(i + 1);
                     block ++;
@@ -510,11 +510,11 @@ public class bPlusTree {
         }
         if(sibling > 0) {
             if(isVer) {
-                Log.d("B+Tree.keySearch", "[Node Access] " + sibling + " sibling node access");
+                log.d("B+Tree.keySearch", "[Node Access] " + sibling + " sibling node access");
             }
         }
         if(isVer) {
-            Log.i("B+Tree.keySearch", String.format("input(%d): %d records found with %d node access", key, result.size(), block));
+            log.i("B+Tree.keySearch", String.format("input(%d): %d records found with %d node access", key, result.size(), block));
         }
         return result;
     }
@@ -532,21 +532,21 @@ public class bPlusTree {
             headKey.add(head.getOneKey(i));
         }
 
-        Log.d("treeStats", "n = " + maxKeys + ", number of nodes = " + nodeCount + ", height = " + height);
-        Log.d("rootContents", "root node contents = " + rootKey);
-        Log.d("firstContents", "first child contents = " + headKey);
+        log.d("treeStats", "n = " + maxKeys + ", number of nodes = " + nodeCount + ", height = " + height);
+        log.d("rootContents", "root node contents = " + rootKey);
+        log.d("firstContents", "first child contents = " + headKey);
     }
 
-    public ArrayList<Address> getRecordsWithKeyInRange(int min, int max) {
+    public ArrayList<address> getRecordsWithKeyInRange(int min, int max) {
         return getRecordsWithKeyInRange(min, max, true);
     }
 
-    public ArrayList<Address> getRecordsWithKeyInRange(int min, int max, boolean isVer) {
-        ArrayList<Address> result = new ArrayList<>();
+    public ArrayList<address> getRecordsWithKeyInRange(int min, int max, boolean isVer) {
+        ArrayList<address> result = new ArrayList<>();
         int nodeAccess = 1;
         int siblingAccess = 0;
         if(isVer) {
-            Log.d("B+Tree.rangeSearch", "[Node Access] Access root node");
+            log.d("B+Tree.rangeSearch", "[Node Access] Access root node");
         }
         Node node = root;
         parentNode PARENT;
@@ -556,8 +556,8 @@ public class bPlusTree {
             for(int i = 0; i < PARENT.getAllKey().size(); i ++) {
                 if(min <= PARENT.getOneKey(i)) {
                     if(isVer) {
-                        Log.v("B+Tree.rangeSearch", node.toString());
-                        Log.d("B+Tree.rangeSearch", String.format("[Node Access] follow pointer [%d]: min(%d)<=curKey(%d)", i, min, PARENT.getOneKey(i)));
+                        log.v("B+Tree.rangeSearch", node.toString());
+                        log.d("B+Tree.rangeSearch", String.format("[Node Access] follow pointer [%d]: min(%d)<=curKey(%d)", i, min, PARENT.getOneKey(i)));
                     }
                     node = PARENT.getChild(i);
                     nodeAccess ++;
@@ -566,8 +566,8 @@ public class bPlusTree {
                 if(i == PARENT.getAllKey().size() - 1) {
                     if(!isVer) {
                         if (isVer) {
-                            Log.v("B+Tree.rangeSearch", node.toString());
-                            Log.d("B+Tree.rangeSearch", String.format("[Node Access] follow pointer [%d+1]: last key and min(%d)>curKey(%d)", i, min, PARENT.getOneKey(i)));
+                            log.v("B+Tree.rangeSearch", node.toString());
+                            log.d("B+Tree.rangeSearch", String.format("[Node Access] follow pointer [%d+1]: last key and min(%d)>curKey(%d)", i, min, PARENT.getOneKey(i)));
                         }
                     }
                     node = PARENT.getChild(i + 1);
@@ -605,16 +605,16 @@ public class bPlusTree {
         }
         if (siblingAccess > 0){
             if (isVer) {
-                Log.d("B+Tree.rangeSearch", "[Node Access] " + siblingAccess + " sibling node access");
+                log.d("B+Tree.rangeSearch", "[Node Access] " + siblingAccess + " sibling node access");
             }
         }
         if (isVer) {
-            Log.i("B+Tree.rangeSearch", String.format("input(%d, %d): %d records found with %d node access", min, max, result.size(), nodeAccess));
+            log.i("B+Tree.rangeSearch", String.format("input(%d, %d): %d records found with %d node access", min, max, result.size(), nodeAccess));
         }
         return result;
     }
 
-    public ArrayList<Address> removeRecordsWithKey() {
+    public ArrayList<address> removeRecordsWithKey() {
         return null;
     }
 
