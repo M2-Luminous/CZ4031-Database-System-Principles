@@ -10,7 +10,7 @@ public class Data {
     public static List<Record> records = new ArrayList<>();;
     //private static final String TAG = "Data";
     //public static List<Record> readData() throws IOException {
-    public static void main(String[] args) throws IOException {
+    public Data() throws IOException {
         BufferedReader reader;
         try{
             reader = new BufferedReader(new FileReader("data.tsv"));
