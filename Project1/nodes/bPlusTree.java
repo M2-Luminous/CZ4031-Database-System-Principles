@@ -1,7 +1,7 @@
 package nodes;
 
-//import app.storage.Address;
-//import app.util.Log;
+import dataOutput.address;
+import log_analyze.log;
 import java.util.ArrayList;
 
 
@@ -20,13 +20,14 @@ public class bPlusTree {
     int nodeCount;
     int deleteCount;
 
-    public bPlusTree(int blockSize){
+    public bPlusTree(int blockSize) {
+        //n keys and (n + 1) pointers
         maxKeys = (blockSize - SIZE_POINTER) / (SIZE_KEY + SIZE_POINTER);     //maximum number of keys available
-        parentMinKeys = (int) Math.floor(maxKeys/2);                           //divides 2 and rounds down 
-        leafMinKeys = (int) Math.floor((maxKeys+1)/2);
+        parentMinKeys = (int) Math.floor(maxKeys / 2);                           //divides 2 and rounds down 
+        leafMinKeys = (int) Math.floor((maxKeys + 1) / 2);
         
-        Log.i(TAG, "initial : blockSize = " + blockSize + ", maxKey = " + maxKeys);
-        Log.i(TAG, "minKeys : parent = " + parentMinKeys + ", leaf = " + leafMinKeys);
+        //Log.i(TAG, "initial : blockSize = " + blockSize + ", maxKey = " + maxKeys);
+        //Log.i(TAG, "minKeys : parent = " + parentMinKeys + ", leaf = " + leafMinKeys);
 
         root = createFirst();
         nodeCount = 0;
@@ -91,7 +92,7 @@ public class bPlusTree {
     }
 
     //split a full leaf node
-    public void splitLeaf(leafNode old, int key, Address address) {
+    public void splitLeaf(leafNode oldNode, int key, Address address) {
         int keys[] = new int[maxKeys + 1];
         Address addresses[] = new Address[maxKeys + 1];
         leafNode LEAF = new leafNode();
@@ -99,8 +100,8 @@ public class bPlusTree {
 
         //get sorted lists of keys and addresses
         for(i = 0; i < maxKeys; i ++) {
-            keys[i] = old.getOneKey(i);
-            addresses[i] = old.getOneRecord(i);
+            keys[i] = oldNode.getOneKey(i);
+            addresses[i] = oldNode.getOneRecord(i);
         }
 
         for(i = maxKeys - 1; i >= 0; i --) {
@@ -115,11 +116,11 @@ public class bPlusTree {
         }
 
         //cleaning old leafnode values
-        old.splitPrep();
+        oldNode.splitPrep();
 
         //putting the keys and addresses into the two leafnodes
         for(i = 0; i < leafMinKeys; i ++) {
-            old.addRecord(keys[i], addresses[i]);
+            oldNode.addRecord(keys[i], addresses[i]);
         }
 
         for(i = leafMinKeys; i < maxKeys + 1; i ++) {
@@ -128,24 +129,24 @@ public class bPlusTree {
 
         //old leafnode to point to new leafnode
         //new leafnode point to next leafnode 
-        LEAF.setNext(old.getNext());
-        old.setNext(LEAF);
+        LEAF.setNext(oldNode.getNext());
+        oldNode.setNext(LEAF);
 
         //setting parents for LEAF
-        if(old.getIsRoot()) {
+        if(oldNode.getIsRoot()) {
             parentNode newRoot = new parentNode();
-            old.setIsRoot(false);
+            oldNode.setIsRoot(false);
             newRoot.setIsRoot(true);
-            newRoot.addChild(old);
+            newRoot.addChild(oldNode);
             newRoot.addChild(LEAF);
             root = newRoot;
             height++;
         }
-        else if(old.getParent().getAllKey().size() < maxKeys) {
-            old.getParent().addChild(LEAF);
+        else if(oldNode.getParent().getAllKey().size() < maxKeys) {
+            oldNode.getParent().addChild(LEAF);
         }
         else {
-            splitParent(old.getParent(), LEAF);
+            splitParent(oldNode.getParent(), LEAF);
         }
 
         //update node count

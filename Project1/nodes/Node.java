@@ -61,23 +61,23 @@ public abstract class Node {
             return 0;
         }
 
-        int i;
+        int index;
         keys.add(key);
-        for(i = keys.size() - 2; i >= 0; i--) {
-            if(keys.get(i) <= key) {
-                i++;
-                keys.set(i, key);
+        for(index = keys.size() - 2; index >= 0; index--) {
+            if(keys.get(index) <= key) {
+                index ++;
+                keys.set(index, key);
                 break;
             }
 
-            keys.set(i + 1, keys.get(i));
+            keys.set(index + 1, keys.get(index));
 
-            if(i == 0) {
-                keys.set(i, key);
+            if(index == 0) {
+                keys.set(index, key);
                 break;
             }
         }
-        return i;
+        return index;
     }
     
     //delete one key
@@ -87,6 +87,7 @@ public abstract class Node {
 
     //delete all key
     public void deleteAllKey() {
+        //initialize keys array to the original status
         keys = new ArrayList<Integer>();
     }
 

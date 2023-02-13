@@ -1,7 +1,7 @@
 package nodes;
 
-import Project1.storage.Address;
-import Project1.util.Log;
+import dataOutput.address;
+import log_analyze.log;
 import java.util.ArrayList;
 
 public class leafNode extends Node{
@@ -29,7 +29,7 @@ public class leafNode extends Node{
 
     //add record
     public int addRecord(int key, Address address) {
-        if(this.getOneRecord().size() == 0){
+        if(this.getAllRecord().size() == 0) {
             this.records.add(address);
             this.addKey(key);
             return 0;
@@ -53,8 +53,8 @@ public class leafNode extends Node{
     }
 
     //get next leaf node
-    public void setNext(leafNode sister){
-        next = sister;
+    public void setNext(leafNode brother) {
+        next = brother;
     }
 
     //splitting leafNode
@@ -76,7 +76,7 @@ public class leafNode extends Node{
 
     @Override
     void logStructure() {
-        Log.d(TAG, this.toString());
+        //Log.d(TAG, this.toString());
     }
 
     @Override
@@ -86,7 +86,7 @@ public class leafNode extends Node{
             if (i > 0) {
                 sb.append(", ");
             }
-             sb.append(String.format("%d:{%d=>%s}" , i , getOneKey(i) , getOneRecord(i)));
+             sb.append(String.format("%d:{%d=>%s}", i, getOneKey(i) , getOneRecord(i)));
         }
         sb.append("]");
         return sb.toString();

@@ -4,7 +4,7 @@ package nodes;
 import java.util.ArrayList;
 
 public class parentNode extends Node{
-    private static final String TAG = "Node.P";
+    //private static final String TAG = "Node.P";
     private ArrayList<Node> children;
 
     public parentNode() {
@@ -31,11 +31,11 @@ public class parentNode extends Node{
         }
 
         int key = child.findSmallestKey();
-        int smallest = this.findSmallestKey();
+        int smallestKey = this.findSmallestKey();
         int index;
 
-        if(key < smallest) {
-            this.addKey(smallest);
+        if(key < smallestKey) {
+            this.addKey(smallestKey);
             this.children.add(0, child);
             index = 0;
         }
@@ -86,7 +86,7 @@ public class parentNode extends Node{
     //get former child
     public Node getFormer(Node node) {
         if(children.indexOf(node) != 0){
-            return children.get(children.indexOf(node) - 1);
+            return children.get(children.indexOf(node) - 1);//former index
         }
         return null;
     }
@@ -94,21 +94,21 @@ public class parentNode extends Node{
     //get Latter node
     public Node getLatter(Node node) {
         if(children.indexOf(node) != children.size() - 1){
-            return children.get(children.indexOf(node) + 1);
+            return children.get(children.indexOf(node) + 1);//latter index
         }
         return null;
     }
 
     @Override
     void logStructure() {
-        Log.d(TAG, this.toString());
+        //Log.d(TAG, this.toString());
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[");
-        for (int i=0; i<getAllKey().size(); i++){
-            if (i>0){
+        for (int i = 0; i < getAllKey().size(); i ++) {
+            if (i > 0) {
                 sb.append(", ");
             }
             sb.append(String.format("%d:{%d}", i, getOneKey(i) ));
