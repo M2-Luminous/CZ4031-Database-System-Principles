@@ -1,17 +1,26 @@
-package Project1.dataOutput;
+package dataOutput;
 
 public class address {
-    private block block_data;
-    private int block_ID;
+    private int blockid;
+    private int offset;
 
-    public address(int block_ID){
-        this.block_ID=block_ID;
-        this.block_data=new block(200);
+    public address(int blockid, int offset){
+        this.blockid=blockid;
+        this.offset=offset;
     }
-    public block get_block(){
-        return this.block_data;
+
+    public void setBlockId(int blockid){
+        this.blockid=blockid;
     }
-    public int get_block_ID(){
-        return this.block_ID;
+    public void setOffset(int offset){
+        this.offset=offset;
     }
+
+    public int getBlockId(){
+        return this.blockid;
+    }
+    public int getOffset(){
+        return this.offset;
+    }
+
 }

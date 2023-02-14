@@ -3,26 +3,26 @@ package Project1.dataOutput;
 import java.util.Arrays;
 
 public class block {
-    private int max_num_records;
-    public int current_num_records;
-    private entry[] all_records;
+    private int maxNumRecords;
+    public int currentNumRecords;
+    private entry[] allRecords;
 
     public block(int size){
-        this.max_num_records=size/entry.get_storage();
-        this.current_num_records=0;
-        this.all_records=new entry[this.max_num_records];
+        this.maxNumRecords=size/entry.getStorage();
+        this.currentNumRecords=0;
+        this.allRecords=new entry[this.maxNumRecords];
     }
 
-    public boolean checkinsert(){
-        return this.max_num_records>=this.current_num_records;
+    public boolean isAvailable(){
+        return this.maxNumRecords>=this.currentNumRecords;
     }
 
-    public int insertrecord(entry record){
-        if (this.checkinsert()){
-            for(int i=0;i<this.all_records.length;i++){
-                if (this.all_records[i]==null){
-                    this.all_records[i]=record;
-                    this.current_num_records++;
+    public int insertRecord(entry record){
+        if (this.isAvailable()){
+            for(int i=0;i<this.allRecords.length;i++){
+                if (this.allRecords[i]==null){
+                    this.allRecords[i]=record;
+                    this.currentNumRecords++;
                     return i;
                 }
             }
@@ -30,28 +30,28 @@ public class block {
         return -1;
     }
 
-    public boolean deleterecord(int index){
-        if (this.all_records[index]!=null){
-            this.all_records[index]=null;
-            this.current_num_records--;
+    public boolean deleteRecord(int index){
+        if (this.allRecords[index]!=null){
+            this.allRecords[index]=null;
+            this.currentNumRecords--;
             return true;
         }
         return false;
     }
 
-    public entry getrecord(int index){
-        return this.all_records[index];
+    public entry getRecord(int index){
+        return this.allRecords[index];
     }
 
-    public entry getrecordat(int index){
-        return this.all_records[index];
+    public entry getRecordAt(int index){
+        return this.allRecords[index];
     }
 
-    public void printblock(){
+    public void printBlock(){
         System.out.println("Printing block:");
-        System.out.printf("Current number of records: %d. All records:%n",this.current_num_records);
-        for (int i=0; i<current_num_records;i++){
-            this.all_records[i].printentry();
+        System.out.printf("Current number of records: %d. All records:%n",this.currentNumRecords);
+        for (int i=0; i<currentNumRecords;i++){
+            this.allRecords[i].printEntry();
         }
         System.out.println("Finished printing block");
     }

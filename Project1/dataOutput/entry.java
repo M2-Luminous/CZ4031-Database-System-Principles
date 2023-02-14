@@ -11,28 +11,28 @@ public class entry {
         this.numVotes=numVotes;
     }
 
-    public static int get_storage(){
+    public static int getStorage(){
         return 10+4+4;
     }
-    public String gettconst(){
+    public String getTconst(){
         return tconst;
     }
-    public int getnumVotes(){
+    public int getNumVotes(){
         return numVotes;
     }
-    public float getaverageRating(){
+    public float getAverageRating(){
         return averageRating;
     }
-    public void setaverageRating(float new_averageRating){
+    public void setAverageRating(float new_averageRating){
         this.averageRating=new_averageRating;
     }
-    public void setnumVotes(int new_numVotes){
+    public void setNumVotes(int new_numVotes){
         this.numVotes=new_numVotes;
     }
-    public void setaverageRating(String new_tconst){
+    public void setAverageRating(String new_tconst){
         this.tconst=new_tconst;
     }
-    public void printentry(){
+    public void printEntry(){
         System.out.printf("tconst: %s, numVotes: %d, averageRating: %f%n",this.tconst,this.numVotes,this.averageRating);
     }
 }
