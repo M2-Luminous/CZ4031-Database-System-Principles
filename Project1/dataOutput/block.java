@@ -1,4 +1,4 @@
-package Project1.dataOutput;
+package dataOutput;
 
 import java.util.Arrays;
 
