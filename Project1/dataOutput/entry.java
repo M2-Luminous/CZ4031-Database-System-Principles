@@ -1,11 +1,11 @@
 package dataOutput;
 
-public class entry {
+public class Entry {
     private String tconst;
     private int numVotes;
     private float averageRating;
 
-    public entry(String tconst,int numVotes,float averageRating){
+    public Entry(String tconst,int numVotes,float averageRating){
         this.averageRating=averageRating;
         this.tconst=tconst;
         this.numVotes=numVotes;

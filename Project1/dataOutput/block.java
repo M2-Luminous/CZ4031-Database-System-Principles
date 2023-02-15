@@ -2,22 +2,22 @@ package dataOutput;
 
 import java.util.Arrays;
 
-public class block {
+public class Block {
     private int maxNumRecords;
     public int currentNumRecords;
-    private entry[] allRecords;
+    private Entry[] allRecords;
 
-    public block(int size){
-        this.maxNumRecords=size/entry.getStorage();
+    public Block(int size){
+        this.maxNumRecords=size/Entry.getStorage();
         this.currentNumRecords=0;
-        this.allRecords=new entry[this.maxNumRecords];
+        this.allRecords=new Entry[this.maxNumRecords];
     }
 
     public boolean isAvailable(){
         return this.maxNumRecords>=this.currentNumRecords;
     }
 
-    public int insertRecord(entry record){
+    public int insertRecord(Entry record){
         if (this.isAvailable()){
             for(int i=0;i<this.allRecords.length;i++){
                 if (this.allRecords[i]==null){
@@ -39,11 +39,11 @@ public class block {
         return false;
     }
 
-    public entry getRecord(int index){
+    public Entry getRecord(int index){
         return this.allRecords[index];
     }
 
-    public entry getRecordAt(int index){
+    public Entry getRecordAt(int index){
         return this.allRecords[index];
     }
 

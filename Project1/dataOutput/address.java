@@ -1,10 +1,10 @@
 package dataOutput;
 
-public class address {
+public class Address {
     private int blockid;
     private int offset;
 
-    public address(int blockid, int offset){
+    public Address(int blockid, int offset){
         this.blockid=blockid;
         this.offset=offset;
     }
