@@ -1,13 +1,16 @@
 package dataOutput;
 
-public class Entry {
+public class Record {
     private String tconst;
     private int numVotes;
     private float averageRating;
 
-    public Entry(String tconst,int numVotes,float averageRating){
+    public Record(String tconst,int numVotes,float averageRating){
+        // Float ranging from 1-10
         this.averageRating=averageRating;
+        // 9 char string
         this.tconst=tconst;
+        // integer 
         this.numVotes=numVotes;
     }
 

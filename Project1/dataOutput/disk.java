@@ -54,7 +54,7 @@ public class Disk {
         return -1;
     }
 
-    public Address insertRecord(Entry record,int blockId) throws Exception{
+    public Address insertRecord(Record record,int blockId) throws Exception{
         Block blockToAddTo=this.blocks.get(blockId);
         if (blockToAddTo==null || !blockToAddTo.isAvailable()){
             if (blocks.size() == maxBlockCount) {
@@ -78,8 +78,8 @@ public class Disk {
             return blocks.size()-1;
         }
     }
-    public ArrayList<Entry> getRecords(ArrayList<Address> addresses){
-        ArrayList<Entry> records = new ArrayList<>();
+    public ArrayList<Record> getRecords(ArrayList<Address> addresses){
+        ArrayList<Record> records = new ArrayList<>();
         int blockAccess = 0;
         for (Address address: addresses) {
             // try search from cache first, before access from disk
@@ -95,7 +95,7 @@ public class Disk {
             //    Log.v("Disk Access", String.format("Cache read: blockId=%d, offset=%d, block=%s", address.blockId, address.offset, tempBlock));
             }
 
-            Entry record = tempBlock.getRecordAt(address.getOffset());
+            Record record = tempBlock.getRecordAt(address.getOffset());
 			// Log.v("Disk Access", String.format("%s read: blockId=%4d, \toffset=%d, \trecord=%s", cacheRead?"Cache":"Disk", address.blockId, address.offset, record));
             records.add(record);
         }

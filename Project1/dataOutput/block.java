@@ -5,19 +5,19 @@ import java.util.Arrays;
 public class Block {
     private int maxNumRecords;
     public int currentNumRecords;
-    private Entry[] allRecords;
+    private Record[] allRecords;
 
     public Block(int size){
-        this.maxNumRecords=size/Entry.getStorage();
+        this.maxNumRecords=size/Record.getStorage();
         this.currentNumRecords=0;
-        this.allRecords=new Entry[this.maxNumRecords];
+        this.allRecords=new Record[this.maxNumRecords];
     }
 
     public boolean isAvailable(){
         return this.maxNumRecords>=this.currentNumRecords;
     }
 
-    public int insertRecord(Entry record){
+    public int insertRecord(Record record){
         if (this.isAvailable()){
             for(int i=0;i<this.allRecords.length;i++){
                 if (this.allRecords[i]==null){
@@ -39,11 +39,11 @@ public class Block {
         return false;
     }
 
-    public Entry getRecord(int index){
+    public Record getRecord(int index){
         return this.allRecords[index];
     }
 
-    public Entry getRecordAt(int index){
+    public Record getRecordAt(int index){
         return this.allRecords[index];
     }
 
