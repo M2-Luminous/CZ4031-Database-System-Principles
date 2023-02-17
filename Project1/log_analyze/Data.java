@@ -10,8 +10,6 @@ import dataOutput.Record;
 
 public class Data {
     public static List<Record> records = new ArrayList<>();;
-    //private static final String TAG = "Data";
-    //public static List<Record> readData() throws IOException {
     public Data() throws IOException {
         BufferedReader reader;
         try{
@@ -30,7 +28,31 @@ public class Data {
             e.printStackTrace();
         }
     }
+
     public List<Record> getRecord(){
         return records;
+    }
+
+    public static String getSize(int size){
+        double b = size;
+        double kb = size/1000;
+        double mb = kb/1000;
+        double gb = mb/1000;
+        double tb = gb/1000;
+        if (kb < 1){
+            return String.format("%.2f %s", b, "B");
+        }
+        else if (mb < 1){
+            return String.format("%.2f %s", kb, "KB");
+        }
+        else if (gb < 1){
+            return String.format("%.2f %s", mb, "MB");
+        }
+        else if (tb < 1){
+            return String.format("%.2f %s", gb, "GB");
+        }
+        else {
+            return String.format("%.2f %s", tb, "TB");
+        }
     }
 }
