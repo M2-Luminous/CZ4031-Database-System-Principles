@@ -532,7 +532,7 @@ public class bPlusTree {
         for(int i = 0; i < head.getAllKey().size(); i ++) {
             headKey.add(head.getOneKey(i));
         }
-
+        
         //Log.d("treeStats", "n = " + maxKeys + ", number of nodes = " + nodeCount + ", height = " + height);
         //Log.d("rootContents", "root node contents = " + rootKey);
         //Log.d("firstContents", "first child contents = " + headKey);

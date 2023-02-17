@@ -19,6 +19,7 @@ public class mainapp implements constants {
 
         boolean running = true;
         mainapp mainapp = new mainapp();
+        boolean exp1 = false;
 
         while (true) {
             System.out.println("CZ4031 Database System Principles Project 1");
@@ -39,8 +40,11 @@ public class mainapp implements constants {
             }
             switch (userInt) {
                 case 1:
+                    if (exp1 == true) {
+                        break;
+                    }
                     System.out.println("----------------Commencing Experiment 1----------------");
-                    mainapp.config(BLOCK_SIZE_200);
+                    exp1 = mainapp.config(BLOCK_SIZE_200);
                     System.out.println();
                     System.out.println("-------------------Experiment 1 has ended-------------------");
                     break;
@@ -68,7 +72,7 @@ public class mainapp implements constants {
         }
     }
 
-    public void config(int blockSize) throws Exception { // setup disk
+    public boolean config(int blockSize) throws Exception { // setup disk
         // List<Record> records = Data.readRecord(DATA_FILE_PATH); // read file
 
         Data data = new Data();
@@ -104,6 +108,8 @@ public class mainapp implements constants {
         index.logStructure(1); // printing root and first level?
 
         index.treeStats();
+
+        return true;
     }
 
     public String format(int size) {
@@ -115,6 +121,34 @@ public class mainapp implements constants {
         }
         double actSize = size / Math.pow(1000, multiplier);
         return df.format(actSize) + memType[multiplier];
+    }
+
+    public void experiment3() { // numvotes 500
+        ArrayList<Address> RecordAddresses = index.getRecordsWithKey(500);
+        ArrayList<Record> records = disk.getRecords(RecordAddresses);
+        // records collected, do calculate average rating
+        double avgRating = 0;
+        for (Record record : records) {
+            avgRating += record.getAverageRating();
+        }
+        avgRating /= records.size();
+        System.out.println("Average rating for records with numvotes  equals to 500 : is " + avgRating);
+    }
+
+    public void experiment4() {
+        ArrayList<Address> e4RecordAddresses = index.getRecordsWithKeyInRange(30000, 40000);
+        ArrayList<Record> records = disk.getRecords(e4RecordAddresses);
+        // records collected, do calculate average rating
+        double avgRating = 0;
+        for (Record record : records) {
+            avgRating += record.getAverageRating();
+        }
+        avgRating /= records.size();
+        System.out.println("Average rating for records with numvotes between 30k - 40k : is " + avgRating);
+    }
+
+    public void experiment5() { // delete numvote == 1k
+        index.deleteKey(1000);
     }
 
 }
