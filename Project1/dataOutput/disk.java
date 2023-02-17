@@ -26,7 +26,7 @@ public class Disk {
      * @return
      */
     public int getBlocksCount(){
-        return blocks.size();
+        return this.blocks.size();
     }
 
     /**
@@ -57,11 +57,11 @@ public class Disk {
     public Address insertRecord(Record record,int blockId) throws Exception{
         Block blockToAddTo=this.blocks.get(blockId);
         if (blockToAddTo==null || !blockToAddTo.isAvailable()){
-            if (blocks.size() == maxBlockCount) {
+            if (this.blocks.size() == maxBlockCount) {
                 throw new Exception("Insufficient spaces on disk");
             }
             blockToAddTo=new Block(this.blockSize);
-            blocks.add(blockToAddTo);
+            this.blocks.add(blockToAddTo);
             blockId=getLastBlockId();
         }
         int index = blockToAddTo.insertRecord(record);
@@ -71,26 +71,26 @@ public class Disk {
     }
 
     public int getLastBlockId(){
-        if (blocks.size()>0){
+        if (this.blocks.size()>0){
             return  -1;
         }
         else{
-            return blocks.size()-1;
+            return this.blocks.size()-1;
         }
     }
     public ArrayList<Record> getRecords(ArrayList<Address> addresses){
         ArrayList<Record> records = new ArrayList<>();
-        int blockAccess = 0;
+        // int blockAccess = 0;
         for (Address address: addresses) {
             // try search from cache first, before access from disk
             Block tempBlock = null;
             tempBlock = cache.get(address.getBlockId());
-            boolean cacheRead = tempBlock != null;
+            // boolean cacheRead = tempBlock != null;
             if (tempBlock == null){
-                tempBlock = blocks.get(address.getBlockId());
+                tempBlock = this.blocks.get(address.getBlockId());
             //    Log.v("Disk Access", String.format("Disk read: blockId=%d, offset=%d, block=%s", address.blockId, address.offset, tempBlock));
                 cache.put(address.getBlockId(), tempBlock);
-                blockAccess++;
+                // blockAccess++;
             } else {// accessing the block from cache, no block access
             //    Log.v("Disk Access", String.format("Cache read: blockId=%d, offset=%d, block=%s", address.blockId, address.offset, tempBlock));
             }
@@ -104,7 +104,7 @@ public class Disk {
     }
 
     public boolean deleteRecord(int blockId, int offset) {
-        boolean success = blocks.get(blockId).deleteRecord(offset);
+        boolean success = this.blocks.get(blockId).deleteRecord(offset);
         if (success) {
             recordCounts--;
         }
