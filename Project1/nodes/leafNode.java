@@ -1,34 +1,34 @@
 package nodes;
 
-import dataOutput.Address;
+import dataOutput.address;
 import log_analyze.log;
 import java.util.ArrayList;
 
 public class leafNode extends Node{
     public static final String TAG = "Node.L";
 
-    private ArrayList<Address> records;
+    private ArrayList<address> records;
     private leafNode next;
 
     public leafNode() {
         super();
-        records = new ArrayList<Address>();
+        records = new ArrayList<address>();
         setIsLeaf(true);
         setNext(null);
     }
 
     //record at arraylist
-    public ArrayList<Address> getAllRecord() {
+    public ArrayList<address> getAllRecord() {
         return records;
     }
 
     //record at index
-    public Address getOneRecord(int index) {
+    public address getOneRecord(int index) {
         return records.get(index);
     }
 
     //add record
-    public int addRecord(int key, Address address) {
+    public int addRecord(int key, address address) {
         if(this.getAllRecord().size() == 0) {
             this.records.add(address);
             this.addKey(key);
@@ -60,7 +60,7 @@ public class leafNode extends Node{
     //splitting leafNode
     public void splitPrep() {
         deleteAllKey();
-        records = new ArrayList<Address>();
+        records = new ArrayList<address>();
     }
 
     //deleting one record
@@ -71,7 +71,7 @@ public class leafNode extends Node{
 
     //deleting all records
     public void deleteAllRecord() {
-        records = new ArrayList<Address>();
+        records = new ArrayList<address>();
     }
 
     @Override

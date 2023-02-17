@@ -2,19 +2,19 @@ package dataOutput;
 
 import java.util.Arrays;
 
-public class Block {
+public class block {
     private int maxNumRecords;
     public int currentNumRecords;
     private Record[] allRecords;
 
-    public Block(int size){
+    public block(int size){
         this.maxNumRecords=size/Record.getStorage();
         this.currentNumRecords=0;
         this.allRecords=new Record[this.maxNumRecords];
     }
 
     public boolean isAvailable(){
-        return this.maxNumRecords>=this.currentNumRecords;
+        return this.maxNumRecords>this.currentNumRecords;
     }
 
     public int insertRecord(Record record){

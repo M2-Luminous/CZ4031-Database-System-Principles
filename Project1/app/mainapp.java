@@ -4,15 +4,15 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 import dataOutput.Record;
-import dataOutput.Disk;
-import dataOutput.Address;
+import dataOutput.disk;
+import dataOutput.address;
 import nodes.bPlusTree;
 import log_analyze.Data;
 //import log_analyze;
 
 public class mainapp implements constants {
     private static final String TAG = "App";
-    public Disk disk;
+    public disk disk;
     public bPlusTree index;
 
     public static void main(String[] args) throws Exception {
@@ -78,14 +78,14 @@ public class mainapp implements constants {
         Data data = new Data();
         List<Record> records = data.getRecord(); // read file
 
-        disk = new Disk(constants.DISK_SIZE, blockSize);
+        disk = new disk(constants.DISK_SIZE, blockSize);
         index = new bPlusTree(blockSize);
 
         System.out.println("Block size of " + format(blockSize));
         System.out.println("Inserting records into Storage");
         // log.i(TAG, "Running program with block size of " + blockSize);
         // log.i(TAG, "Prepare to insert records into storage and create index");
-        Address recordAddr;
+        address recordAddr;
         for (Record r : records) {
             // inserting records into disk and create index!
             int lastBlkId = disk.getLastBlockId();
@@ -124,7 +124,7 @@ public class mainapp implements constants {
     }
 
     public void experiment3() { // numvotes 500
-        ArrayList<Address> RecordAddresses = index.getRecordsWithKey(500);
+        ArrayList<address> RecordAddresses = index.getRecordsWithKey(500);
         ArrayList<Record> records = disk.getRecords(RecordAddresses);
         // records collected, do calculate average rating
         double avgRating = 0;
@@ -136,7 +136,7 @@ public class mainapp implements constants {
     }
 
     public void experiment4() {
-        ArrayList<Address> e4RecordAddresses = index.getRecordsWithKeyInRange(30000, 40000);
+        ArrayList<address> e4RecordAddresses = index.getRecordsWithKeyInRange(30000, 40000);
         ArrayList<Record> records = disk.getRecords(e4RecordAddresses);
         // records collected, do calculate average rating
         double avgRating = 0;

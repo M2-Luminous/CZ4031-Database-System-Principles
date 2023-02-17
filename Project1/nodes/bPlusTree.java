@@ -1,6 +1,6 @@
 package nodes;
 
-import dataOutput.Address;
+import dataOutput.address;
 import log_analyze.log;
 import java.util.ArrayList;
 
@@ -44,7 +44,7 @@ public class bPlusTree {
     }
 
     //insert a record into b plus tree
-    public void insert(int key, Address address) {
+    public void insert(int key, address address) {
         this.insertToLeaf(this.searchLeafNode(key), key, address);
     }
 
@@ -82,7 +82,7 @@ public class bPlusTree {
     }
 
     //insert record to leaf node
-    public void insertToLeaf(leafNode leaf, int key, Address address) {
+    public void insertToLeaf(leafNode leaf, int key, address address) {
         if(leaf.getAllKey().size() < maxKeys) {
             leaf.addRecord(key, address);
         }
@@ -92,9 +92,9 @@ public class bPlusTree {
     }
 
     //split a full leaf node
-    public void splitLeaf(leafNode oldNode, int key, Address address) {
+    public void splitLeaf(leafNode oldNode, int key, address address) {
         int keys[] = new int[maxKeys + 1];
-        Address addresses[] = new Address[maxKeys + 1];
+        address addresses[] = new address[maxKeys + 1];
         leafNode LEAF = new leafNode();
         int i;
 
@@ -443,12 +443,12 @@ public class bPlusTree {
         resetParent(PARENT);
     }
 
-    public ArrayList<Address> getRecordsWithKey(int key) {
+    public ArrayList<address> getRecordsWithKey(int key) {
         return getRecordsWithKey(key, true);
     }
 
-    public ArrayList<Address> getRecordsWithKey(int key, boolean isVer) {
-        ArrayList<Address> result = new ArrayList<>();
+    public ArrayList<address> getRecordsWithKey(int key, boolean isVer) {
+        ArrayList<address> result = new ArrayList<>();
         int block = 1;
         int sibling = 0;
         //if(isVer) {
@@ -538,12 +538,12 @@ public class bPlusTree {
         //Log.d("firstContents", "first child contents = " + headKey);
     }
 
-    public ArrayList<Address> getRecordsWithKeyInRange(int min, int max) {
+    public ArrayList<address> getRecordsWithKeyInRange(int min, int max) {
         return getRecordsWithKeyInRange(min, max, true);
     }
 
-    public ArrayList<Address> getRecordsWithKeyInRange(int min, int max, boolean isVer) {
-        ArrayList<Address> result = new ArrayList<>();
+    public ArrayList<address> getRecordsWithKeyInRange(int min, int max, boolean isVer) {
+        ArrayList<address> result = new ArrayList<>();
         int nodeAccess = 1;
         int siblingAccess = 0;
         //if(isVer) {
@@ -613,7 +613,7 @@ public class bPlusTree {
         return result;
     }
 
-    public ArrayList<Address> removeRecordsWithKey() {
+    public ArrayList<address> removeRecordsWithKey() {
         return null;
     }
 
