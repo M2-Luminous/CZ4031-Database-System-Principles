@@ -1,11 +1,10 @@
 package dataOutput;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
-
 public class Disk {
-    // number of record, size of a record, number of records in a block, number of
-    // blocks for storing data
+    //number of record, size of a record, number of records in a block, number of blocks for storing data
     private int diskSize;
     private int blockSize;
     private int maxBlockCount;
@@ -13,49 +12,41 @@ public class Disk {
     private ArrayList<Block> blocks;
     private HashMap<Integer, Block> cache = new HashMap<>();
 
-    public Disk(int diskSize, int blockSize) {
-        this.diskSize = diskSize;
-        this.blockSize = blockSize;
-        this.maxBlockCount = diskSize / blockSize;
-        this.recordCounts = 0;
-        this.blocks = new ArrayList<>();
+    public Disk(int diskSize, int blockSize){
+        this.diskSize=diskSize;
+        this.blockSize=blockSize;
+        this.maxBlockCount=diskSize/blockSize;
+        this.recordCounts=0;
+        this.blocks=new ArrayList<>();
 
-    }
-
-    public ArrayList<Block> getBlock() {
-        return this.blocks;
     }
 
     /**
      * Get the total number of blocks exist in the storage
-     * 
      * @return
      */
-    public int getBlocksCount() {
-        return blocks.size();
+    public int getBlocksCount(){
+        return this.blocks.size();
     }
 
     /**
      * Get the total number of records exist in the storage
-     * 
      * @return
      */
-    public int getRecordCounts() {
+    public int getRecordCounts(){
         return recordCounts;
     }
-
     /**
      * Get the used size of storage
-     * 
      * @return
      */
-    public int getUsedSize() {
+    public int getUsedSize(){
         return getBlocksCount() * blockSize;
     }
 
-    public int getAvailableBlockId() {
-        for (int i = 0; i < this.maxBlockCount; i++) {
-            if (!this.blocks.get(i).isAvailable()) {
+    public int getAvailableBlockId(){
+        for (int i=0;i<this.maxBlockCount;i++){
+            if (!this.blocks.get(i).isAvailable()){
                 continue;
             }
             return i;
@@ -63,85 +54,66 @@ public class Disk {
         return -1;
     }
 
-    public Address appendRecord(Entry record) throws Exception{
-        int blockId = getLastBlockId();
-        return insertRecord(record, blockId);
-    }
-
-    public Address insertRecord(Entry record, int blockId) throws Exception {
-
-        Block blockToAddTo = null;
-        if (blockId >= 0) { // need to check case for first block/record created.
-            blockToAddTo = this.blocks.get(blockId);
-        }
-        // Block blockToAddTo = this.blocks.get(blockId);
-        if (blockToAddTo == null || !blockToAddTo.isAvailable()) {
-            if (blocks.size() == maxBlockCount) {
+    public Address insertRecord(Record record,int blockId) throws Exception{
+        Block blockToAddTo=this.blocks.get(blockId);
+        if (blockToAddTo==null || !blockToAddTo.isAvailable()){
+            if (this.blocks.size() == maxBlockCount) {
                 throw new Exception("Insufficient spaces on disk");
             }
-            blockToAddTo = new Block(this.blockSize);
-            blocks.add(blockToAddTo);
-            blockId = getLastBlockId();
+            blockToAddTo=new Block(this.blockSize);
+            this.blocks.add(blockToAddTo);
+            blockId=getLastBlockId();
         }
         int index = blockToAddTo.insertRecord(record);
         this.recordCounts++;
-        return new Address(blockId, index);
-
+        return new Address(blockId,index);
+        
     }
 
-    public int getLastBlockId() {
-        if (blocks.size() > 0) {
-            return -1;
-        } else {
-            return blocks.size() - 1;
+    public int getLastBlockId(){
+        if (this.blocks.size()>0){
+            return  -1;
+        }
+        else{
+            return this.blocks.size()-1;
         }
     }
-
-    public ArrayList<Entry> getRecords(ArrayList<Address> addresses) {
-        ArrayList<Entry> records = new ArrayList<>();
-        int blockAccess = 0;
-        for (Address address : addresses) {
+    public ArrayList<Record> getRecords(ArrayList<Address> addresses){
+        ArrayList<Record> records = new ArrayList<>();
+        // int blockAccess = 0;
+        for (Address address: addresses) {
             // try search from cache first, before access from disk
             Block tempBlock = null;
             tempBlock = cache.get(address.getBlockId());
-            boolean cacheRead = tempBlock != null;
-            if (tempBlock == null) {
-                tempBlock = blocks.get(address.getBlockId());
-                // Log.v("Disk Access", String.format("Disk read: blockId=%d, offset=%d,
-                // block=%s", address.blockId, address.offset, tempBlock));
+            // boolean cacheRead = tempBlock != null;
+            if (tempBlock == null){
+                tempBlock = this.blocks.get(address.getBlockId());
+            //    Log.v("Disk Access", String.format("Disk read: blockId=%d, offset=%d, block=%s", address.blockId, address.offset, tempBlock));
                 cache.put(address.getBlockId(), tempBlock);
-                blockAccess++;
+                // blockAccess++;
             } else {// accessing the block from cache, no block access
-                // Log.v("Disk Access", String.format("Cache read: blockId=%d, offset=%d,
-                // block=%s", address.blockId, address.offset, tempBlock));
+            //    Log.v("Disk Access", String.format("Cache read: blockId=%d, offset=%d, block=%s", address.blockId, address.offset, tempBlock));
             }
 
-            Entry record = tempBlock.getRecordAt(address.getOffset());
-            // Log.v("Disk Access", String.format("%s read: blockId=%4d, \toffset=%d,
-            // \trecord=%s", cacheRead?"Cache":"Disk", address.blockId, address.offset,
-            // record));
+            Record record = tempBlock.getRecordAt(address.getOffset());
+			// Log.v("Disk Access", String.format("%s read: blockId=%4d, \toffset=%d, \trecord=%s", cacheRead?"Cache":"Disk", address.blockId, address.offset, record));
             records.add(record);
         }
-        // Log.i(TAG, String.format("Retrieved %d records with %d block access",
-        // records.size(), blockAccess));
+        // Log.i(TAG, String.format("Retrieved %d records with %d block access", records.size(), blockAccess));
         return records;
     }
 
     public boolean deleteRecord(int blockId, int offset) {
-        boolean success = blocks.get(blockId).deleteRecord(offset);
+        boolean success = this.blocks.get(blockId).deleteRecord(offset);
         if (success) {
             recordCounts--;
         }
         return success;
     }
 
-    public void deleteRecords(ArrayList<Address> recordAddresses) {
-        for (Address address : recordAddresses) {
+    public void deleteRecords(ArrayList<Address> recordAddresses){
+        for (Address address: recordAddresses) {
             deleteRecord(address.getBlockId(), address.getOffset());
         }
-    }
-
-    public int getDiskSize() {
-        return this.diskSize;
     }
 }
