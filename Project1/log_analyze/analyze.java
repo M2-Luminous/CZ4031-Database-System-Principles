@@ -1,5 +1,7 @@
 package log_analyze;
 
+import dataOutput.Entry;
+
 public class analyze {
     public static int minTconstLen = Integer.MIN_VALUE;
     public static float minAverageRating = Float.MIN_VALUE;
@@ -7,24 +9,24 @@ public class analyze {
     public static int maxTconstLen = Integer.MAX_VALUE;
     public static float maxAverageRating = Float.MAX_VALUE;
     public static int maxNumVotes = Integer.MAX_VALUE;
-    public static void analyzeValue (Record record) {
-        if (record.gettconst().length < minTconstLen){
-            minTconstLen = record.gettconst().length;
+    public static void analyzeValue (Entry record) {
+        if (record.getTconst().length() < minTconstLen){
+            minTconstLen = record.getTconst().length();
         }
-        if (record.getaverageRating() < minAverageRating){
-            minAverageRating = record.getaverageRating();
+        if (record.getAverageRating() < minAverageRating){
+            minAverageRating = record.getAverageRating();
         }
-        if (record.getnumVotes() < minNumVotes){
-            minNumVotes = record.getnumVotes();
+        if (record.getNumVotes() < minNumVotes){
+            minNumVotes = record.getNumVotes();
         }
-        if (record.gettconst().length > maxTconstLen){
-            maxTconstLen = record.gettconst().length;
+        if (record.getTconst().length() > maxTconstLen){
+            maxTconstLen = record.getTconst().length();
         }
-        if (record.getaverageRating() > maxAverageRating){
-            maxAverageRating = record.getaverageRating();
+        if (record.getAverageRating() > maxAverageRating){
+            maxAverageRating = record.getAverageRating();
         }
-        if (record.getnumVotes() > maxNumVotes){
-            maxNumVotes = record.getnumVotes();
+        if (record.getNumVotes() > maxNumVotes){
+            maxNumVotes = record.getNumVotes();
         }
     }
 
