@@ -6,10 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import dataOutput.Entry;
+import dataOutput.Record;
 
 public class Data {
-    public static List<Entry> records = new ArrayList<>();;
+    public static List<Record> records = new ArrayList<>();;
     //private static final String TAG = "Data";
     //public static List<Record> readData() throws IOException {
     public Data() throws IOException {
@@ -20,7 +20,7 @@ public class Data {
             String line = reader.readLine();
             while (line != null) {
                 String[] words = line.split("\\t");
-                Entry record = new Entry(words[0] , Integer.parseInt(words[2]), Float.parseFloat(words[1]));
+                Record record = new Record(words[0] , Integer.parseInt(words[2]), Float.parseFloat(words[1]));
                 records.add(record);
                 analyze.analyzeValue(record);
                 line = reader.readLine();
@@ -30,7 +30,7 @@ public class Data {
             e.printStackTrace();
         }
     }
-    public List<Entry> getRecord(){
+    public List<Record> getRecord(){
         return records;
     }
 }

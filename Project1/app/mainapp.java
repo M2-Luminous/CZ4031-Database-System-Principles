@@ -3,7 +3,7 @@ package app;
 import java.text.DecimalFormat;
 import java.util.*;
 
-import dataOutput.Entry;
+import dataOutput.Record;
 import dataOutput.Disk;
 import dataOutput.Address;
 import nodes.bPlusTree;
@@ -72,7 +72,7 @@ public class mainapp implements constants {
         // List<Record> records = Data.readRecord(DATA_FILE_PATH); // read file
 
         Data data = new Data();
-        List<Entry> records = data.getRecord(); // read file
+        List<Record> records = data.getRecord(); // read file
 
         disk = new Disk(constants.DISK_SIZE, blockSize);
         index = new bPlusTree(blockSize);
@@ -82,9 +82,11 @@ public class mainapp implements constants {
         // log.i(TAG, "Running program with block size of " + blockSize);
         // log.i(TAG, "Prepare to insert records into storage and create index");
         Address recordAddr;
-        for (Entry r : records) {
+        for (Record r : records) {
             // inserting records into disk and create index!
-            recordAddr = disk.appendRecord(r);
+            int lastBlkId = disk.getLastBlockId();
+            System.out.println(lastBlkId);
+            recordAddr = disk.insertRecord(r, lastBlkId);
             index.insert(r.getNumVotes(), recordAddr);
         }
         System.out.println("Records insertion completed");
@@ -95,9 +97,9 @@ public class mainapp implements constants {
         // storage / total
         // number of records
         System.out.println("Number of blocks for storing the data : " + disk.getBlocksCount());
-        disk.getBlock().get(0).printBlock();
-        int test = disk.getBlock().get(0).getMaxNumOfRecords();
-        System.out.println("max no of rec in a block is : " + test);
+        // disk.getBlock().get(0).printBlock();
+        // int test = disk.getBlock().get(0).getMaxNumOfRecords();
+        // System.out.println("max no of rec in a block is : " + test);
 
         index.logStructure(1); // printing root and first level?
 

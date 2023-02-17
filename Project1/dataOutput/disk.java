@@ -116,4 +116,8 @@ public class Disk {
             deleteRecord(address.getBlockId(), address.getOffset());
         }
     }
+
+    public int getDiskSize(){
+        return this.diskSize;
+    }
 }

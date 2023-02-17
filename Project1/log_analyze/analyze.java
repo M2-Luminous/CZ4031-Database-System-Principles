@@ -1,6 +1,6 @@
 package log_analyze;
 
-import dataOutput.Entry;
+import dataOutput.Record;
 
 public class analyze {
     public static int minTconstLen = Integer.MIN_VALUE;
@@ -9,7 +9,7 @@ public class analyze {
     public static int maxTconstLen = Integer.MAX_VALUE;
     public static float maxAverageRating = Float.MAX_VALUE;
     public static int maxNumVotes = Integer.MAX_VALUE;
-    public static void analyzeValue (Entry record) {
+    public static void analyzeValue (Record record) {
         if (record.getTconst().length() < minTconstLen){
             minTconstLen = record.getTconst().length();
         }
