@@ -15,7 +15,7 @@ public class Record {
     }
 
     public static int getStorage(){
-        return 10+4+4;
+        return 9+4+4;
     }
     public String getTconst(){
         return tconst;
@@ -32,7 +32,7 @@ public class Record {
     public void setNumVotes(int new_numVotes){
         this.numVotes=new_numVotes;
     }
-    public void setAverageRating(String new_tconst){
+    public void setTconst(String new_tconst){
         this.tconst=new_tconst;
     }
     public void printEntry(){

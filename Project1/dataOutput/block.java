@@ -8,7 +8,7 @@ public class block {
     private Record[] allRecords;
 
     public block(int size){
-        this.maxNumRecords=size/Record.getStorage();
+        this.maxNumRecords=(size-4)/Record.getStorage();
         this.currentNumRecords=0;
         this.allRecords=new Record[this.maxNumRecords];
     }

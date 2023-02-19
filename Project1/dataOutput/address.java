@@ -6,6 +6,7 @@ public class address {
 
     public address(int blockid, int offset){
         this.blockid=blockid;
+        // 1 byte to represent offset since offset is less than 16
         this.offset=offset;
     }
 
