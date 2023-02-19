@@ -55,4 +55,9 @@ public class block {
         }
         System.out.println("Finished printing block");
     }
+
+    public int getCurrentNoOfRecords(){
+        return this.currentNumRecords;
+    }
+    
 }

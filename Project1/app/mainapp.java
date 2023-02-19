@@ -8,7 +8,7 @@ import dataOutput.disk;
 import dataOutput.address;
 import nodes.bPlusTree;
 import log_analyze.Data;
-//import log_analyze;
+import dataOutput.block;
 
 public class mainapp implements constants {
     private static final String TAG = "App";
@@ -71,6 +71,11 @@ public class mainapp implements constants {
                     endTime = System.nanoTime();
                     duration = (endTime - startTime)/1000;
                     System.out.println("Duration of this experiment is " + duration + " seconds");
+                    startTime  = System.nanoTime();
+                    mainapp.doLinearScanAve(500);
+                    endTime = System.nanoTime();
+                    duration = (endTime - startTime)/1000;
+                    System.out.println("Duration of this experiment is " + duration + " seconds");
                     System.out.println("-------------------Experiment 3 has ended-------------------");
                     break;
                 case 4:
@@ -81,6 +86,11 @@ public class mainapp implements constants {
                     System.out.println("----------------Commencing Experiment 4----------------");
                     startTime  = System.nanoTime();
                     exp4 = mainapp.experiment4();
+                    endTime = System.nanoTime();
+                    duration = (endTime - startTime)/1000;
+                    System.out.println("Duration of this experiment is " + duration + " seconds");
+                    startTime  = System.nanoTime();
+                    mainapp.doLinearScanRange(30000, 40000);
                     endTime = System.nanoTime();
                     duration = (endTime - startTime)/1000;
                     System.out.println("Duration of this experiment is " + duration + " seconds");
@@ -97,6 +107,11 @@ public class mainapp implements constants {
                     endTime = System.nanoTime();
                     duration = (endTime - startTime)/1000;
                     System.out.println("Duration of this experiment is " + duration + " seconds");
+                    startTime  = System.nanoTime();
+                    mainapp.doLinearScanDlt(1000);
+                    endTime = System.nanoTime();
+                    duration = (endTime - startTime)/1000;
+                    System.out.println("Duration of this experiment is " + duration + " seconds");
                     System.out.println("-------------------Experiment 5 has ended-------------------");
                     break;
                 default:
@@ -108,7 +123,6 @@ public class mainapp implements constants {
     }
 
     public boolean config(int blockSize) throws Exception { // setup disk
-        // List<Record> records = Data.readRecord(DATA_FILE_PATH); // read file
 
         Data data = new Data();
         List<Record> records = data.getRecord(); // read file
@@ -118,30 +132,22 @@ public class mainapp implements constants {
 
         System.out.println("Block size of " + format(blockSize));
         System.out.println("Inserting records into Storage");
-        // log.i(TAG, "Running program with block size of " + blockSize);
-        // log.i(TAG, "Prepare to insert records into storage and create index");
         address recordAddr;
         for (Record r : records) {
             // inserting records into disk and create index!
             int lastBlkId = disk.getLastBlockId();
-            //System.out.println(lastBlkId);
             recordAddr = disk.insertRecord(r, lastBlkId);
             index.insert(r.getNumVotes(), recordAddr);
         }
         System.out.println("Records insertion completed");
         System.out.println("Experiment 1 Questions : ");
-        //System.out.println("Disk size is : " + format(disk.getUsedSize()) + " / " + format(disk.getDiskSize()));
         System.out.println("Number of records is : " + disk.getRecordCounts());
         System.out.println("Size of a record is : " + disk.getUsedSize() / disk.getRecordCounts()); // used size of
         // storage / total
         // number of records
         System.out.println("Number of records stored in a block is : " + blockSize/(disk.getUsedSize() / disk.getRecordCounts()));
         System.out.println("Number of blocks for storing the data : " + disk.getBlocksCount());
-        // disk.getBlock().get(0).printBlock();
-        // int test = disk.getBlock().get(0).getMaxNumOfRecords();
-        // System.out.println("max no of rec in a block is : " + test);
         System.out.println("Experiment 2 Questions : ");
-        //index.logStructure(1); // printing root and first level?
 
         index.treeStats();
 
@@ -172,7 +178,7 @@ public class mainapp implements constants {
         return true;
     }
 
-    public boolean experiment4() {
+    public boolean experiment4() { // range numvote = 30k - 40k
         ArrayList<address> e4RecordAddresses = index.getRecordsWithKeyInRange(30000, 40000);
         ArrayList<Record> records = disk.getRecords(e4RecordAddresses);
         // records collected, do calculate average rating
@@ -188,6 +194,77 @@ public class mainapp implements constants {
     public boolean experiment5() { // delete numvote == 1k
         index.deleteKey(1000);
         return true;
+    }
+
+    public void doLinearScanAve(int numVotes){
+        ArrayList<block> blocks = new ArrayList<>();
+        blocks = disk.getBlocks();
+        int count = 0;
+        int hit = 0;
+        double ave = 0;
+        for(int i = 0 ; i < blocks.size() ; i++){
+            count++; //no of blocks accessed
+            block block = blocks.get(i);
+            int currentNoOfRecords = block.getCurrentNoOfRecords();
+            for(int j = 0 ; j<currentNoOfRecords ; j++){
+                Record record = block.getRecord(j);
+                if(record.getNumVotes() == numVotes ){
+                    hit++; //record hit
+                    ave+=record.getAverageRating();
+                }
+            }
+        }
+        ave = ave/hit;
+        System.out.println("-------------Linear scan output-----------");
+        System.out.println("No of Blocks accessed is " + count);
+        System.out.println("No of Records found with "+ numVotes + " numvotes is "+ hit);
+        System.out.println("Average is  " + ave);
+    }
+
+    public void doLinearScanDlt(int numVotes){
+        ArrayList<block> blocks = new ArrayList<>();
+        blocks = disk.getBlocks();
+        int count = 0;
+        int hit = 0;
+        for(int i = 0 ; i < blocks.size() ; i++){
+            count++; //no of blocks accessed
+            block block = blocks.get(i);
+            int currentNoOfRecords = block.getCurrentNoOfRecords();
+            for(int j = 0 ; j<currentNoOfRecords ; j++){
+                Record record = block.getRecord(j);
+                if(record.getNumVotes() == numVotes ){
+                    hit++; //record hit
+                }
+            }
+        }
+        System.out.println("-------------Linear scan output-----------");
+        System.out.println("No of Blocks accessed is " + count);
+        System.out.println("No of Records found with "+ numVotes + " numvotes is "+ hit);
+    }
+
+    public void doLinearScanRange(int numVotesSmall , int numVotesLarge){
+        ArrayList<block> blocks = new ArrayList<>();
+        blocks = disk.getBlocks();
+        int count = 0;
+        int hit = 0;
+        double ave = 0;
+        for(int i = 0 ; i < blocks.size() ; i++){
+            count++; //no of blocks accessed
+            block block = blocks.get(i);
+            int currentNoOfRecords = block.getCurrentNoOfRecords();
+            for(int j = 0 ; j<currentNoOfRecords ; j++){
+                Record record = block.getRecord(j);
+                if(record.getNumVotes() >=numVotesSmall && record.getNumVotes()<=numVotesLarge ){
+                    hit++; //record hit
+                    ave+=record.getAverageRating();
+                }
+            }
+        }
+        ave = ave/hit;
+        System.out.println("-------------Linear scan output-----------");
+        System.out.println("No of Blocks accessed is " + count);
+        System.out.println("No of Records found with range "+ numVotesSmall + " and " + numVotesLarge + " numvotes is "+ hit);
+        System.out.println("Average is  " + ave);
     }
 
 }

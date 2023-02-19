@@ -1,7 +1,7 @@
 package app;
 
 public interface constants {
-    int DISK_SIZE = 300 * 1000 * 1000; // cant select 100mb or 200 mb as not enough
+    int DISK_SIZE = 100 * 1000 * 1000; 
     int BLOCK_SIZE_200 = 200;
 
     String PROJECT_DIRECTORY = "Project1/data";

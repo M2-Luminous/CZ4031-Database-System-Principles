@@ -21,6 +21,9 @@ public class disk {
         this.blocks = new ArrayList<>();
 
     }
+    public ArrayList<block> getBlocks(){
+        return this.blocks;
+    }
 
     /**
      * Get the total number of blocks exist in the storage

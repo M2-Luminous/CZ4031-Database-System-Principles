@@ -518,6 +518,9 @@ public class bPlusTree {
         //if(isVer) {
         //    Log.i("B+Tree.keySearch", String.format("input(%d): %d records found with %d node access", key, result.size(), block));
         //}
+        if(isVer){
+        System.out.println("No of Blocks accessed is " + block);
+        }
         return result;
     }
 
@@ -615,6 +618,7 @@ public class bPlusTree {
         //if (isVer) {
         //    Log.i("B+Tree.rangeSearch", String.format("input(%d, %d): %d records found with %d node access", min, max, result.size(), nodeAccess));
         //}
+        System.out.println("Number of Index Node accessed is " + nodeAccess);
         return result;
     }
 
