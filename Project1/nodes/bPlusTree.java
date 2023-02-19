@@ -451,6 +451,7 @@ public class bPlusTree {
     public ArrayList<address> getRecordsWithKey(int key, boolean isVer) {
         ArrayList<address> result = new ArrayList<>();
         int block = 1;
+        int nodeAccess = 1;
         int sibling = 0;
         //if(isVer) {
         //    Log.d("B+Tree.keySearch" , "[Node Access] Access root node");
@@ -468,6 +469,7 @@ public class bPlusTree {
                     //}
                     node = PARENT.getChild(i);
                     block ++;
+                    nodeAccess ++;
                     break;
                 }
                 if(i == PARENT.getAllKey().size() - 1) {
@@ -477,6 +479,7 @@ public class bPlusTree {
                     //}
                     node = PARENT.getChild(i + 1);
                     block ++;
+                    nodeAccess ++;
                     break;
                 }
             }
@@ -519,6 +522,7 @@ public class bPlusTree {
         //    Log.i("B+Tree.keySearch", String.format("input(%d): %d records found with %d node access", key, result.size(), block));
         //}
         if(isVer){
+        System.out.println("Number of Index Node accessed is " + nodeAccess);
         System.out.println("No of Blocks accessed is " + block);
         }
         return result;
@@ -554,6 +558,7 @@ public class bPlusTree {
         ArrayList<address> result = new ArrayList<>();
         int nodeAccess = 1;
         int siblingAccess = 0;
+        int block = 1;
         //if(isVer) {
         //    Log.d("B+Tree.rangeSearch", "[Node Access] Access root node");
         //}
@@ -570,6 +575,7 @@ public class bPlusTree {
                     //}
                     node = PARENT.getChild(i);
                     nodeAccess ++;
+                    block ++;
                     break;
                 }
                 if(i == PARENT.getAllKey().size() - 1) {
@@ -579,6 +585,7 @@ public class bPlusTree {
                     //}
                     node = PARENT.getChild(i + 1);
                     nodeAccess ++;
+                    block ++;
                     break;
                 }
             }
@@ -619,6 +626,7 @@ public class bPlusTree {
         //    Log.i("B+Tree.rangeSearch", String.format("input(%d, %d): %d records found with %d node access", min, max, result.size(), nodeAccess));
         //}
         System.out.println("Number of Index Node accessed is " + nodeAccess);
+        System.out.println("No of Blocks accessed is " + block);
         return result;
     }
 

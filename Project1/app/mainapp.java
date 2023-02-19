@@ -20,6 +20,7 @@ public class mainapp implements constants {
         boolean running = true;
         mainapp mainapp = new mainapp();
         boolean exp1 = false;
+        boolean exp2 = false;
         boolean exp3 = false;
         boolean exp4 = false;
         boolean exp5 = false;
@@ -57,7 +58,12 @@ public class mainapp implements constants {
                     System.out.println("-------------------Experiment 1 has ended-------------------");
                     break;
                 case 2:
+                    if (exp2 == true){
+                        System.out.println("Experiment has already concluded.");
+                        break;
+                    }
                     System.out.println("----------------Commencing Experiment 2----------------");
+                    exp2 = mainapp.experiment2();
                     System.out.println("-------------------Experiment 2 has ended-------------------");
                     break;
                 case 3:
@@ -147,10 +153,16 @@ public class mainapp implements constants {
         // number of records
         System.out.println("Number of records stored in a block is : " + blockSize/(disk.getUsedSize() / disk.getRecordCounts()));
         System.out.println("Number of blocks for storing the data : " + disk.getBlocksCount());
-        System.out.println("Experiment 2 Questions : ");
+        //System.out.println("Experiment 2 Questions : ");
+        
+        //index.treeStats();
+        
+        return true;
+    }
 
+    public boolean experiment2(){
+        //System.out.println("Experiment 2 Questions : ");
         index.treeStats();
-
         return true;
     }
 
