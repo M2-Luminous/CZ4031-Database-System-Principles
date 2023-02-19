@@ -75,7 +75,7 @@ public class disk {
         }
         int index = blockToAddTo.insertRecord(record);
         this.recordCounts++;
-        this.blocks.get(blockId).printBlock();
+        //this.blocks.get(blockId).printBlock();
         return new address(blockId, index);
 
     }

@@ -20,6 +20,13 @@ public class mainapp implements constants {
         boolean running = true;
         mainapp mainapp = new mainapp();
         boolean exp1 = false;
+        boolean exp3 = false;
+        boolean exp4 = false;
+        boolean exp5 = false;
+
+        long startTime;
+        long endTime;
+        long duration;
 
         while (true) {
             System.out.println("CZ4031 Database System Principles Project 1");
@@ -41,6 +48,7 @@ public class mainapp implements constants {
             switch (userInt) {
                 case 1:
                     if (exp1 == true) {
+                        System.out.println("Experiment has already concluded.");
                         break;
                     }
                     System.out.println("----------------Commencing Experiment 1----------------");
@@ -53,15 +61,42 @@ public class mainapp implements constants {
                     System.out.println("-------------------Experiment 2 has ended-------------------");
                     break;
                 case 3:
+                    if (exp3 == true) {
+                        System.out.println("Experiment has already concluded.");
+                    break;
+                    }
                     System.out.println("----------------Commencing Experiment 3----------------");
+                    startTime  = System.nanoTime();
+                    exp3 = mainapp.experiment3();
+                    endTime = System.nanoTime();
+                    duration = (endTime - startTime)/1000;
+                    System.out.println("Duration of this experiment is " + duration + " seconds");
                     System.out.println("-------------------Experiment 3 has ended-------------------");
                     break;
                 case 4:
+                if (exp4 == true) {
+                    System.out.println("Experiment has already concluded.");
+                break;
+                }
                     System.out.println("----------------Commencing Experiment 4----------------");
+                    startTime  = System.nanoTime();
+                    exp4 = mainapp.experiment4();
+                    endTime = System.nanoTime();
+                    duration = (endTime - startTime)/1000;
+                    System.out.println("Duration of this experiment is " + duration + " seconds");
                     System.out.println("-------------------Experiment 4 has ended-------------------");
                     break;
                 case 5:
+                if (exp5 == true) {
+                    System.out.println("Experiment has already concluded.");
+                break;
+                }
                     System.out.println("----------------Commencing Experiment 5----------------");
+                    startTime  = System.nanoTime();
+                    exp5 = mainapp.experiment5();
+                    endTime = System.nanoTime();
+                    duration = (endTime - startTime)/1000;
+                    System.out.println("Duration of this experiment is " + duration + " seconds");
                     System.out.println("-------------------Experiment 5 has ended-------------------");
                     break;
                 default:
@@ -89,23 +124,24 @@ public class mainapp implements constants {
         for (Record r : records) {
             // inserting records into disk and create index!
             int lastBlkId = disk.getLastBlockId();
-            System.out.println(lastBlkId);
+            //System.out.println(lastBlkId);
             recordAddr = disk.insertRecord(r, lastBlkId);
             index.insert(r.getNumVotes(), recordAddr);
         }
         System.out.println("Records insertion completed");
-
-        System.out.println("Disk size is : " + format(disk.getUsedSize()) + " / " + format(disk.getDiskSize()));
+        System.out.println("Experiment 1 Questions : ");
+        //System.out.println("Disk size is : " + format(disk.getUsedSize()) + " / " + format(disk.getDiskSize()));
         System.out.println("Number of records is : " + disk.getRecordCounts());
         System.out.println("Size of a record is : " + disk.getUsedSize() / disk.getRecordCounts()); // used size of
         // storage / total
         // number of records
+        System.out.println("Number of records stored in a block is : " + blockSize/(disk.getUsedSize() / disk.getRecordCounts()));
         System.out.println("Number of blocks for storing the data : " + disk.getBlocksCount());
         // disk.getBlock().get(0).printBlock();
         // int test = disk.getBlock().get(0).getMaxNumOfRecords();
         // System.out.println("max no of rec in a block is : " + test);
-
-        index.logStructure(1); // printing root and first level?
+        System.out.println("Experiment 2 Questions : ");
+        //index.logStructure(1); // printing root and first level?
 
         index.treeStats();
 
@@ -123,7 +159,7 @@ public class mainapp implements constants {
         return df.format(actSize) + memType[multiplier];
     }
 
-    public void experiment3() { // numvotes 500
+    public boolean experiment3() { // numvotes 500
         ArrayList<address> RecordAddresses = index.getRecordsWithKey(500);
         ArrayList<Record> records = disk.getRecords(RecordAddresses);
         // records collected, do calculate average rating
@@ -132,10 +168,11 @@ public class mainapp implements constants {
             avgRating += record.getAverageRating();
         }
         avgRating /= records.size();
-        System.out.println("Average rating for records with numvotes  equals to 500 : is " + avgRating);
+        System.out.println("Average rating for records with numvotes equals to 500 is " + avgRating);
+        return true;
     }
 
-    public void experiment4() {
+    public boolean experiment4() {
         ArrayList<address> e4RecordAddresses = index.getRecordsWithKeyInRange(30000, 40000);
         ArrayList<Record> records = disk.getRecords(e4RecordAddresses);
         // records collected, do calculate average rating
@@ -144,11 +181,13 @@ public class mainapp implements constants {
             avgRating += record.getAverageRating();
         }
         avgRating /= records.size();
-        System.out.println("Average rating for records with numvotes between 30k - 40k : is " + avgRating);
+        System.out.println("Average rating for records with numvotes between 30k - 40k is " + avgRating);
+        return true;
     }
 
-    public void experiment5() { // delete numvote == 1k
+    public boolean experiment5() { // delete numvote == 1k
         index.deleteKey(1000);
+        return true;
     }
 
 }

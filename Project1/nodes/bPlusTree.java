@@ -234,6 +234,7 @@ public class bPlusTree {
             }
         }
         //Log.d("deletion", "number of nodes deleted = " + deleteCount);
+        System.out.println("Number of nodes deleted is "  + deleteCount);
         
         //update node count
         nodeCount -= deleteCount;
@@ -532,7 +533,11 @@ public class bPlusTree {
         for(int i = 0; i < head.getAllKey().size(); i ++) {
             headKey.add(head.getOneKey(i));
         }
-        
+        System.out.println("Tree status is : ");
+        System.out.println("n = " + maxKeys);
+        System.out.println("Number of nodes of the B+ Tree is : " + nodeCount);
+        System.out.println("Number of levels of the B+ Tree is " + height);
+        System.out.println("Root node contents is : " + rootKey);
         //Log.d("treeStats", "n = " + maxKeys + ", number of nodes = " + nodeCount + ", height = " + height);
         //Log.d("rootContents", "root node contents = " + rootKey);
         //Log.d("firstContents", "first child contents = " + headKey);
