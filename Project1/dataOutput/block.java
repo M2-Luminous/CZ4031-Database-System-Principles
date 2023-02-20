@@ -11,7 +11,7 @@ public class block {
     private Record[] allRecords;
 
     public block(int size){
-        this.maxNumRecords=(byte) ((size-1)/Record.getStorage());
+        this.maxNumRecords=(byte) ((size-2)/Record.getStorage());
         this.currentNumRecords=0;
         this.allRecords=new Record[this.maxNumRecords];
     }
