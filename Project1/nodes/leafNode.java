@@ -1,7 +1,6 @@
 package nodes;
 
 import dataOutput.address;
-import log_analyze.log;
 import java.util.ArrayList;
 
 public class leafNode extends Node{

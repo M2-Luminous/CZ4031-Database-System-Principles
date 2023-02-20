@@ -1,7 +1,6 @@
 package nodes;
 
 import dataOutput.address;
-import log_analyze.log;
 import java.util.ArrayList;
 
 
@@ -25,10 +24,6 @@ public class bPlusTree {
         maxKeys = (blockSize - SIZE_POINTER) / (SIZE_KEY + SIZE_POINTER);     //maximum number of keys available
         parentMinKeys = (int) Math.floor(maxKeys / 2);                           //divides 2 and rounds down 
         leafMinKeys = (int) Math.floor((maxKeys + 1) / 2);
-        
-        //Log.i(TAG, "initial : blockSize = " + blockSize + ", maxKey = " + maxKeys);
-        //Log.i(TAG, "minKeys : parent = " + parentMinKeys + ", leaf = " + leafMinKeys);
-
         root = createFirst();
         nodeCount = 0;
         deleteCount = 0;
@@ -233,7 +228,6 @@ public class bPlusTree {
                 }
             }
         }
-        //Log.d("deletion", "number of nodes deleted = " + deleteCount);
         System.out.println("Number of nodes deleted is "  + deleteCount);
         
         //update node count
@@ -453,9 +447,6 @@ public class bPlusTree {
         int block = 1;
         int nodeAccess = 1;
         int sibling = 0;
-        //if(isVer) {
-        //    Log.d("B+Tree.keySearch" , "[Node Access] Access root node");
-        //}
         Node node = root;
         parentNode PARENT;
         //search for leaf node with key
@@ -463,20 +454,12 @@ public class bPlusTree {
             PARENT = (parentNode) node;
             for(int i = 0; i < PARENT.getAllKey().size(); i++) {
                 if(key <= PARENT.getOneKey(i)) {
-                    //if(isVer) {
-                    //    Log.v("B+Tree.keySearch" , node.toString());
-                    //    Log.d("B+Tree.keySearch" , String.format("[Node Access] follow pointer [%d]: key(%d)<=curKey(%d)", i, key, PARENT.getOneKey(i)));
-                    //}
                     node = PARENT.getChild(i);
                     block ++;
                     nodeAccess ++;
                     break;
                 }
                 if(i == PARENT.getAllKey().size() - 1) {
-                    //if(isVer) {
-                    //    Log.v("B+Tree.keySearch", node.toString());
-                    //    Log.d("B+Tree.keySearch",String.format("[Node Access] follow pointer [%d+1]: last key and key(%d)>curKey(%d)", i, key, PARENT.getOneKey(i) ));
-                    //}
                     node = PARENT.getChild(i + 1);
                     block ++;
                     nodeAccess ++;
@@ -513,14 +496,6 @@ public class bPlusTree {
                 }
             }
         }
-        //if(sibling > 0) {
-        //    if(isVer) {
-        //        Log.d("B+Tree.keySearch", "[Node Access] " + sibling + " sibling node access");
-        //    }
-        //}
-        //if(isVer) {
-        //    Log.i("B+Tree.keySearch", String.format("input(%d): %d records found with %d node access", key, result.size(), block));
-        //}
         if(isVer){
         System.out.println("Number of Index Node accessed is " + nodeAccess);
         System.out.println("No of Blocks accessed is " + block);
@@ -545,9 +520,6 @@ public class bPlusTree {
         System.out.println("Number of nodes of the B+ Tree is : " + nodeCount);
         System.out.println("Number of levels of the B+ Tree is " + height);
         System.out.println("Root node contents is : " + rootKey);
-        //Log.d("treeStats", "n = " + maxKeys + ", number of nodes = " + nodeCount + ", height = " + height);
-        //Log.d("rootContents", "root node contents = " + rootKey);
-        //Log.d("firstContents", "first child contents = " + headKey);
     }
 
     public ArrayList<address> getRecordsWithKeyInRange(int min, int max) {
@@ -559,9 +531,6 @@ public class bPlusTree {
         int nodeAccess = 1;
         int siblingAccess = 0;
         int block = 1;
-        //if(isVer) {
-        //    Log.d("B+Tree.rangeSearch", "[Node Access] Access root node");
-        //}
         Node node = root;
         parentNode PARENT;
         //search for leaf node with key
@@ -569,20 +538,12 @@ public class bPlusTree {
             PARENT = (parentNode) node;
             for(int i = 0; i < PARENT.getAllKey().size(); i ++) {
                 if(min <= PARENT.getOneKey(i)) {
-                    //if(isVer) {
-                    //    Log.v("B+Tree.rangeSearch", node.toString());
-                    //    Log.d("B+Tree.rangeSearch", String.format("[Node Access] follow pointer [%d]: min(%d)<=curKey(%d)", i, min, PARENT.getOneKey(i)));
-                    //}
                     node = PARENT.getChild(i);
                     nodeAccess ++;
                     block ++;
                     break;
                 }
                 if(i == PARENT.getAllKey().size() - 1) {
-                    //if (isVer) {
-                    //    Log.v("B+Tree.rangeSearch", node.toString());
-                    //    Log.d("B+Tree.rangeSearch", String.format("[Node Access] follow pointer [%d+1]: last key and min(%d)>curKey(%d)", i, min, PARENT.getOneKey(i)));
-                    //}
                     node = PARENT.getChild(i + 1);
                     nodeAccess ++;
                     block ++;
@@ -617,14 +578,6 @@ public class bPlusTree {
                 }
             }
         }
-        //if (siblingAccess > 0){
-        //    if (isVer) {
-        //        Log.d("B+Tree.rangeSearch", "[Node Access] " + siblingAccess + " sibling node access");
-        //    }
-        //}
-        //if (isVer) {
-        //    Log.i("B+Tree.rangeSearch", String.format("input(%d, %d): %d records found with %d node access", min, max, result.size(), nodeAccess));
-        //}
         System.out.println("Number of Index Node accessed is " + nodeAccess);
         System.out.println("No of Blocks accessed is " + block);
         return result;
