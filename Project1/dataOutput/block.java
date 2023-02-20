@@ -11,11 +11,15 @@ public class block {
     private Record[] allRecords;
 
     public block(int size){
+        // minus 2 as 2 bytes is used as headers.
         this.maxNumRecords=(byte) ((size-2)/Record.getStorage());
         this.currentNumRecords=0;
         this.allRecords=new Record[this.maxNumRecords];
     }
 
+    /*
+     * Check if the block is available for insertion
+     */
     public boolean isAvailable(){
         return this.maxNumRecords>this.currentNumRecords;
     }

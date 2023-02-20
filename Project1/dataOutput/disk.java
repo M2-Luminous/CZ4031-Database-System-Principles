@@ -8,7 +8,6 @@ public class disk {
     // blocks for storing data
     private int diskSize;
     private int blockSize;
-    private int maxBlockCount;
     private int recordCounts;
     private ArrayList<block> blocks;
     private HashMap<Integer, block> cache = new HashMap<>();
@@ -16,7 +15,6 @@ public class disk {
     public disk(int diskSize, int blockSize) {
         this.diskSize = diskSize;
         this.blockSize = blockSize;
-        this.maxBlockCount = diskSize / blockSize;
         this.recordCounts = 0;
         this.blocks = new ArrayList<>();
 
@@ -25,41 +23,32 @@ public class disk {
         return this.blocks;
     }
 
-    /**
+    /*
+     * Get the maximum number of blocks that can exist in the storage
+     */
+    public int getMaxBlockCount(){
+        return this.diskSize / this.blockSize;
+    }
+
+    /*
      * Get the total number of blocks exist in the storage
-     * 
-     * @return
      */
     public int getBlocksCount() {
         return this.blocks.size();
     }
 
-    /**
+    /*
      * Get the total number of records exist in the storage
-     * 
-     * @return
      */
     public int getRecordCounts() {
         return recordCounts;
     }
 
-    /**
+    /*
      * Get the used size of storage
-     * 
-     * @return
      */
     public int getUsedSize() {
         return getBlocksCount() * blockSize;
-    }
-
-    public int getAvailableBlockId() {
-        for (int i = 0; i < this.maxBlockCount; i++) {
-            if (!this.blocks.get(i).isAvailable()) {
-                continue;
-            }
-            return i;
-        }
-        return -1;
     }
 
     public address insertRecord(Record record, int blockId) throws Exception {
@@ -69,7 +58,7 @@ public class disk {
         }
 
         if (blockToAddTo == null || !blockToAddTo.isAvailable()) {
-            if (this.blocks.size() == maxBlockCount) {
+            if (this.blocks.size() == this.diskSize / this.blockSize) {
                 throw new Exception("Insufficient spaces on disk");
             }
             blockToAddTo = new block(this.blockSize);
@@ -82,6 +71,9 @@ public class disk {
 
     }
 
+    /*
+     * Get the last block id
+     */
     public int getLastBlockId() {
         if (this.blocks.size() <= 0) {
             return -1;
@@ -120,6 +112,9 @@ public class disk {
         }
     }
 
+    /*
+     * Get the size of storage
+     */
     public int getDiskSize() {
         return this.diskSize;
     }
