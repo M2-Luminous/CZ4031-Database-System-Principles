@@ -8,7 +8,7 @@ public class Record {
     public Record(String tconst,int numVotes,float averageRating){
         // Float ranging from 1-10
         this.averageRating=averageRating;
-        // 9 char string
+        // 10 char string
         this.tconst=tconst;
         // integer 
         this.numVotes=numVotes;
