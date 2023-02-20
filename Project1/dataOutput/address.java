@@ -5,6 +5,7 @@ public class address {
     private int offset;
 
     public address(int blockid, int offset){
+        // 7 bytes to represent block id
         this.blockid=blockid;
         // 1 byte to represent offset since offset is less than 16
         this.offset=offset;

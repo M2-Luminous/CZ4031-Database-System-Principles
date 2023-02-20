@@ -3,12 +3,15 @@ package dataOutput;
 import java.util.Arrays;
 
 public class block {
-    private int maxNumRecords;
-    public int currentNumRecords;
+    //maxNumRecords needs to be in header as it shows if the block is available. 1 bytes used as it is an byte
+    private byte maxNumRecords;
+    //currentNumRecords needs to be in header as it shows if the block is available. 1 bytes used as it is an byte
+    public byte currentNumRecords;
+    //Records that will be saved in the code
     private Record[] allRecords;
 
     public block(int size){
-        this.maxNumRecords=(size-4)/Record.getStorage();
+        this.maxNumRecords=(byte) ((size-1)/Record.getStorage());
         this.currentNumRecords=0;
         this.allRecords=new Record[this.maxNumRecords];
     }

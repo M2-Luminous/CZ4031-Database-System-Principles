@@ -15,7 +15,7 @@ public class Record {
     }
 
     public static int getStorage(){
-        return 9+4+4;
+        return 10+4+4;
     }
     public String getTconst(){
         return tconst;
