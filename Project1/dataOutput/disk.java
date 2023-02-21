@@ -6,10 +6,10 @@ import java.util.HashMap;
 public class disk {
     // number of record, size of a record, number of records in a block, number of
     // blocks for storing data
-    private int diskSize;
-    private int blockSize;
-    private int recordCounts;
-    private ArrayList<block> blocks;
+    private int diskSize; //Disk Size
+    private int blockSize; //Block Size
+    private int recordCounts; //Number of records
+    private ArrayList<block> blocks; //All the blocks
     private HashMap<Integer, block> cache = new HashMap<>();
 
     public disk(int diskSize, int blockSize) {
