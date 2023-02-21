@@ -1,50 +1,39 @@
 package dataOutput;
 
 public class Record {
-    private String tconst;
-    private int numVotes;
-    private float averageRating;
+    private String tconst; // 10 bytes: 10 char string
+    private int numVotes; // 4 bytes: Float ranging from 1-10
+    private float averageRating; // 4 bytes: integer 
 
     public Record(String tconst,int numVotes,float averageRating){
-        // Float ranging from 1-10
-        this.averageRating=averageRating;
-        // 10 char string
-        this.tconst=tconst;
-        // integer 
-        this.numVotes=numVotes;
+        this.averageRating=averageRating; // Float ranging from 1-10
+        this.tconst=tconst; // 10 char string
+        this.numVotes=numVotes; // integer 
     }
 
-    /**
+    /*
      * Get size of record
-     * 
-     * @return
      */
     public static int getStorage(){
         return 10+4+4;
     }
 
-    /**
+    /*
      * Get the tconst of record
-     * 
-     * @return
      */
     public String getTconst(){
         return tconst;
     }
 
-    /**
+    /*
      * Get the number of votes for record
-     * 
-     * @return
      */
     public int getNumVotes(){
         return numVotes;
     }
 
-    /**
+    /*
      * Get the average rating for record
-     * 
-     * @return
      */
     public float getAverageRating(){
         return averageRating;
