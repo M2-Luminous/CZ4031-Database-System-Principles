@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class disk {
-    // number of record, size of a record, number of records in a block, number of
-    // blocks for storing data
     private int diskSize; //Disk Size
     private int blockSize; //Block Size
     private int recordCounts; //Number of records
