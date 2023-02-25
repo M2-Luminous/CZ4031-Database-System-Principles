@@ -582,29 +582,4 @@ public class bPlusTree {
         return null;
     }
 
-    public void logStructure(){
-        logStructure(0 , Integer.MAX_VALUE , root);
-    }
-
-    public void logStructure(int maxLevel){
-        logStructure(0 , maxLevel, root);
-    }
-
-    private void logStructure(int level, int maxLevel, Node node) {
-        if(node == null) {
-            node = root;
-        }
-        if(level > maxLevel) {
-            return;
-        }
-
-        System.out.print("h = " + level + " ; ");
-        if(node.getIsLeaf()) {
-            return;
-        }
-        parentNode PARENT = (parentNode) node;
-        for(Node child : PARENT.getChildren()) {
-            logStructure(level + 1, maxLevel, child);
-        } 
-    }
 }
