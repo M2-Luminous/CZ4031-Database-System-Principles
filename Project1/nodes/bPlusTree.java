@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class bPlusTree {
     private static final int SIZE_POINTER = 6;
     private static final int SIZE_KEY = 4;
-    private static final String TAG = "bplustree";
 
     int maxKeys;
     int parentMinKeys;
@@ -446,7 +445,6 @@ public class bPlusTree {
         ArrayList<address> result = new ArrayList<>();
         int block = 1;
         int nodeAccess = 1;
-        int sibling = 0;
         Node node = root;
         parentNode PARENT;
         //search for leaf node with key
@@ -489,7 +487,6 @@ public class bPlusTree {
                 if(LEAF.getNext() != null) {
                     LEAF = LEAF.getNext();
                     block ++;
-                    sibling ++;
                 } 
                 else {
                     break;
@@ -529,7 +526,6 @@ public class bPlusTree {
     public ArrayList<address> getRecordsWithKeyInRange(int min, int max, boolean isVer) {
         ArrayList<address> result = new ArrayList<>();
         int nodeAccess = 1;
-        int siblingAccess = 0;
         int block = 1;
         Node node = root;
         parentNode PARENT;
@@ -571,7 +567,6 @@ public class bPlusTree {
                 if(LEAF.getNext() != null) {
                     LEAF = (leafNode) LEAF.getNext();
                     nodeAccess ++;
-                    siblingAccess ++; 
                 }
                 else {
                     break;
