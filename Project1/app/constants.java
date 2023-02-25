@@ -6,6 +6,5 @@ public interface constants {
 
     String PROJECT_DIRECTORY = "Project1/data";
     String DATA_FILE_PATH = "Project1/data/data.tsv";
-    String DATA_TEST_FILE_PATH = "data_test.tsv";
 
 }
