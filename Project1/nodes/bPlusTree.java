@@ -604,7 +604,6 @@ public class bPlusTree {
         }
 
         System.out.print("h = " + level + " ; ");
-        node.logStructure();
         if(node.getIsLeaf()) {
             return;
         }

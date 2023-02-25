@@ -99,10 +99,7 @@ public class parentNode extends Node{
         return null;
     }
 
-    @Override
-    void logStructure() {
-        //Log.d(TAG, this.toString());
-    }
+
 
     @Override
     public String toString() {

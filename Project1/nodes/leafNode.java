@@ -74,11 +74,6 @@ public class leafNode extends Node{
     }
 
     @Override
-    void logStructure() {
-        //Log.d(TAG, this.toString());
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < getAllKey().size(); i ++) {
