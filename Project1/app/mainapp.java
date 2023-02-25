@@ -11,13 +11,11 @@ import log_analyze.Data;
 import dataOutput.block;
 
 public class mainapp implements constants {
-    private static final String TAG = "App";
     public disk disk;
     public bPlusTree index;
 
     public static void main(String[] args) throws Exception {
 
-        boolean running = true;
         mainapp mainapp = new mainapp();
         boolean exp1 = false;
         boolean exp2 = false;

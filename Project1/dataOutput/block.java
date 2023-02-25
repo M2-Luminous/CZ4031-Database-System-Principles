@@ -1,7 +1,5 @@
 package dataOutput;
 
-import java.util.Arrays;
-
 public class block {
     //maxNumRecords needs to be in header as it shows if the block is available. 1 bytes used as it is an byte
     private byte maxNumRecords;
