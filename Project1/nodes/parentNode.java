@@ -1,10 +1,8 @@
 package nodes;
 
-//import app.util.Log;
 import java.util.ArrayList;
 
 public class parentNode extends Node{
-    //private static final String TAG = "Node.P";
     private ArrayList<Node> children;
 
     public parentNode() {

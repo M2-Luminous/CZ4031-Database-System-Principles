@@ -520,10 +520,6 @@ public class bPlusTree {
     }
 
     public ArrayList<address> getRecordsWithKeyInRange(int min, int max) {
-        return getRecordsWithKeyInRange(min, max, true);
-    }
-
-    public ArrayList<address> getRecordsWithKeyInRange(int min, int max, boolean isVer) {
         ArrayList<address> result = new ArrayList<>();
         int nodeAccess = 1;
         int block = 1;
@@ -578,8 +574,5 @@ public class bPlusTree {
         return result;
     }
 
-    public ArrayList<address> removeRecordsWithKey() {
-        return null;
-    }
 
 }
