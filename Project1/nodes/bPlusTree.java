@@ -437,10 +437,6 @@ public class bPlusTree {
         resetParent(PARENT);
     }
 
-    public ArrayList<address> getRecordsWithKey(int key) {
-        return getRecordsWithKey(key, true);
-    }
-
     public ArrayList<address> getRecordsWithKey(int key, boolean isVer) {
         ArrayList<address> result = new ArrayList<>();
         int block = 1;
@@ -494,8 +490,8 @@ public class bPlusTree {
             }
         }
         if(isVer){
-        System.out.println("Number of Index Node accessed is " + nodeAccess);
-        System.out.println("No of Blocks accessed is " + block);
+            System.out.println("Number of Index Node accessed is " + nodeAccess);
+            System.out.println("No of Blocks accessed is " + block);
         }
         return result;
     }

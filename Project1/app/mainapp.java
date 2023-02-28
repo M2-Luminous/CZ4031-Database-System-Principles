@@ -151,15 +151,10 @@ public class mainapp implements constants {
         // number of records
         System.out.println("Number of records stored in a block is : " + blockSize/(disk.getUsedSize() / disk.getRecordCounts()));
         System.out.println("Number of blocks for storing the data : " + disk.getBlocksCount());
-        //System.out.println("Experiment 2 Questions : ");
-        
-        //index.treeStats();
-        
         return true;
     }
 
     public boolean experiment2(){
-        //System.out.println("Experiment 2 Questions : ");
         index.treeStats();
         return true;
     }
@@ -176,7 +171,7 @@ public class mainapp implements constants {
     }
 
     public boolean experiment3() { // numvotes 500
-        ArrayList<address> RecordAddresses = index.getRecordsWithKey(500);
+        ArrayList<address> RecordAddresses = index.getRecordsWithKey(500, true);
         ArrayList<Record> records = disk.getRecords(RecordAddresses);
         // records collected, do calculate average rating
         double avgRating = 0;
