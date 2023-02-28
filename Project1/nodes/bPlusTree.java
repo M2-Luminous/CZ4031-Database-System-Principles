@@ -39,7 +39,7 @@ public class bPlusTree {
 
     //insert a record into b plus tree
     public void insert(int key, address address) {
-        this.insertToLeaf(this.searchLeafNode(key), key, address);
+        this.insertRecord(this.searchLeafNode(key), key, address);
     }
 
     //search inserted leafnode for record
@@ -76,17 +76,17 @@ public class bPlusTree {
     }
 
     //insert record to leaf node
-    public void insertToLeaf(leafNode leaf, int key, address address) {
+    public void insertRecord(leafNode leaf, int key, address address) {
         if(leaf.getAllKey().size() < maxKeys) {
             leaf.addRecord(key, address);
         }
         else {
-            splitLeaf(leaf, key, address);
+            splitLeafNode(leaf, key, address);
         }
     }
 
     //split a full leaf node
-    public void splitLeaf(leafNode oldNode, int key, address address) {
+    public void splitLeafNode(leafNode oldNode, int key, address address) {
         int keys[] = new int[maxKeys + 1];
         address addresses[] = new address[maxKeys + 1];
         leafNode LEAF = new leafNode();
@@ -140,7 +140,7 @@ public class bPlusTree {
             oldNode.getParent().addChild(LEAF);
         }
         else {
-            splitParent(oldNode.getParent(), LEAF);
+            splitParentNode(oldNode.getParent(), LEAF);
         }
 
         //update node count
@@ -148,7 +148,7 @@ public class bPlusTree {
     }
 
     //split parent node
-    public void splitParent(parentNode parent, Node child) {
+    public void splitParentNode(parentNode parent, Node child) {
         Node children[] = new Node[maxKeys + 2];
         int keys[] = new int[maxKeys + 2];
         int key = child.findSmallestKey();
@@ -197,7 +197,7 @@ public class bPlusTree {
             parent.getParent().addChild(PARENT);
         }
         else {
-            splitParent(parent.getParent(), PARENT);
+            splitParentNode(parent.getParent(), PARENT);
         }
 
         //update node count
@@ -221,7 +221,7 @@ public class bPlusTree {
 
                     //if leaf node is not a root then update tree
                     if(!leaf.getIsRoot()) {
-                        resetLeaf(leaf);
+                        resetLeafNode(leaf);
                     }
                     break;
                 }
@@ -236,7 +236,7 @@ public class bPlusTree {
     }
 
     //reset leaf node
-    public void resetLeaf(leafNode node) {
+    public void resetLeafNode(leafNode node) {
         if(node.getAllKey().size() >= leafMinKeys) {
             resetParent(node.getParent());
             return;
