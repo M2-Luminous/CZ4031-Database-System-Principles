@@ -7,7 +7,6 @@ import dataOutput.Record;
 import dataOutput.disk;
 import dataOutput.address;
 import nodes.bPlusTree;
-import log_analyze.Data;
 import dataOutput.block;
 
 public class mainapp implements constants {

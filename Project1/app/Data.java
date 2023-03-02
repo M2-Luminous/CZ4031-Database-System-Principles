@@ -1,4 +1,4 @@
-package log_analyze;
+package app;
 
 import java.util.*;
 import java.io.BufferedReader;
