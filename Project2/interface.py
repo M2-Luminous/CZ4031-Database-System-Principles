@@ -1,1 +1,1 @@
-#The annotation.py contains code for generating theannotations.
+#The file interface.py contains the code for the GUI
