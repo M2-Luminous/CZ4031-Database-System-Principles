@@ -1,48 +1,45 @@
-#The file interface.py contains the code for the GUI
-#pip install PyQt5
 from PyQt5 import QtWidgets
-from PyQt5 import uic
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from PyQt5.QtCore import *    #from PyQt5.QtCore import Qt
+from PyQt5.QtCore import *
 import sys
 
-#from explain import process, init_conn
+#from annotation import process, init_conn
 
-class ScrollableLable(QScrollArea):
 
-    def _init_(self, *args, **kwargs):
-        QScrollArea._init_(self, *args, **kwargs)
+class ScrollableLabel(QScrollArea):
+
+    def __init__(self, *args, **kwargs):
+        QScrollArea.__init__(self, *args, **kwargs)
         widget = QWidget(self)
         self.setWidgetResizable(True)
         self.setWidget(widget)
-        layout = QVBoxLayout(widget)     #not necessary?
+        layout = QVBoxLayout(widget)
         self.label = QLabel(widget)
         self.label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.label.setFont(QFont('Arial', 15))
         self.label.setStyleSheet("background-color: beige; border: 1px solid black;")
-        
-        self.input_sql = self.findChild(QTextEdit, "input_query")
-        self.label_qep = self.findChild(QLabel, "text_plan")
-        self.btn_analyse = self.findChild(QPushButton, "btn_analyse")
-        self.btn_clear = self.findChild(QPushButton, "btn_clear")
-        self.list_database = self.findChild(QComboBox, "combo_databases")
-        self.tree_attrs = self.findChild(QTreeWidget, "tree_attrs")
-        
+        #self.input_sql = self.findChild(QTextEdit, "input_query")
+        #self.label_qep = self.findChild(QLabel, "text_plan")
+        #self.btn_analyse = self.findChild(QPushButton, "btn_analyse")
+        #self.btn_clear = self.findChild(QPushButton, "btn_clear")
+        #self.list_database = self.findChild(QComboBox, "combo_databases")
+        #self.tree_attrs = self.findChild(QTreeWidget, "tree_attrs")
         layout.addWidget(self.label)
 
     def setText(self, text):
         self.label.setText(text)
 
+
 class MyWindow(QMainWindow):
-    def _init_(self):
-        super(MyWindow, self)._init_()
-        self.setGeometry(300, 50, 1600, 900)
+    def __init__(self):
+        super(MyWindow, self).__init__()
+        self.setGeometry(300, 50, 1600, 900)  # xpos, ypos, width, height
         self.setWindowTitle("Application GUI")
 
         # Output text for query and annotation
-        self.queryOutput = ScrollableLable(self)
-        self.queryExplain = ScrollableLable(self)
+        self.queryOutput = ScrollableLabel(self)
+        self.queryExplain = ScrollableLabel(self)
 
         # Button for running algorithm
         self.submitButton = QtWidgets.QPushButton(self)
@@ -52,18 +49,18 @@ class MyWindow(QMainWindow):
         self.dbNameTextbox = QTextEdit(self)
 
         # Label to indicate which db name is the app currently connected to
-        self.dbNameLabel = ScrollableLable(self)
+        self.dbNameLabel = ScrollableLabel(self)
 
         # Error message box
         self.error_dialog = QtWidgets.QErrorMessage()
 
-        self.initUI()
+        self.UI()  # Call initUI
 
-        # Db connection settings 
-        self.connection = None
+        # Db connection settings
+        self.conn = None
         self.dbName = ''
 
-    def initUI(self):
+    def UI(self):
         self.queryTextbox.move(30, 20)
         self.queryTextbox.resize(750, 350)
         self.queryTextbox.setFont(QFont('Arial', 15))
@@ -101,38 +98,43 @@ class MyWindow(QMainWindow):
         self.submitButton.move(820, 270)
         self.submitButton.resize(300, 100)
 
-    def setOnAnalyseClicked(self, callback):
-        if callback:
-            self.btn_analyse.clicked.connect(callback)    
-
     def onClick(self):
         if self.dbName != self.dbNameTextbox.toPlainText():
             try:
-                self.connection = init_conn(self.dbNameTextbox.toPlainText())
+                # A connection in need of explain.py's obtain message function
+                self.conn = init_conn(self.dbNameTextbox.toPlainText())
                 self.dbName = self.dbNameTextbox.toPlainText()
                 self.dbNameLabel.setText(f"Current DB Name: {self.dbName}")
             except Exception as e:
                 self.error_dialog.showMessage(f"ERROR - {e}")
-        if self.connection is not None:
+        if self.conn is not None:
             try:
-                query, annotation = process(self.connection, self.queryTextbox.toPlainText())
+                # A connection in need of explain.py's output result function
+                #def explain(self, query, query2):
+                query, annotation = process(self.conn, self.queryTextbox.toPlainText())
                 self.queryOutput.setText('\n'.join(query))
-                self.queryExplain.setText('\n'.join(annotation))
+                self.queryAnnotate.setText('\n'.join(annotation))
             except Exception as e:
                 self.error_dialog.showMessage(f"ERROR - {e}")
 
-    def showError(self, errMessage, execption=None):
-        dialog = QMessageBox()
-        dialog.setStyleSheet("QLabel{min-width: 300px;}");
-        dialog.setWindowTitle("Error")
-        #dialog.setIcon(QMessageBox.Warning)
-        dialog.setText(errMessage)
-        if execption is not None:
-            dialog.setDetailedText(str(execption))
-        dialog.setStandardButtons(QMessageBox.Ok)
-        #dialog.buttonClicked.connect(cb)
-        dialog.exec_()
-        
+    #def init_conn(db_name):
+    #    db_uname, db_pass, db_host, db_port = import_config()
+    #    conn = open_db(db_name, db_uname, db_pass, db_host, db_port)
+    #    return conn
+
+    #def showError(self, errMessage, execption=None):
+    #    dialog = QMessageBox()
+    #    dialog.setStyleSheet("QLabel{min-width: 300px;}");
+    #    dialog.setWindowTitle("Error")
+    #    #dialog.setIcon(QMessageBox.Warning)
+    #    dialog.setText(errMessage)
+    #    if execption is not None:
+    #        dialog.setDetailedText(str(execption))
+    #    dialog.setStandardButtons(QMessageBox.Ok)
+    #    #dialog.buttonClicked.connect(cb)
+    #    dialog.exec_()
+
+
 def window():
     app = QApplication(sys.argv)
     win = MyWindow()
