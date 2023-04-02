@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import sys
+from project import *
 
 #from annotation import process, init_conn
 
@@ -57,7 +58,7 @@ class MyWindow(QMainWindow):
         self.UI()  # Call initUI
 
         # Db connection settings
-        self.conn = None
+        self.database = None
         self.dbName = ''
 
     def UI(self):
@@ -102,21 +103,35 @@ class MyWindow(QMainWindow):
         if self.dbName != self.dbNameTextbox.toPlainText():
             try:
                 # A connection in need of explain.py's obtain message function
-                self.conn = init_conn(self.dbNameTextbox.toPlainText())
+                self.database=Database(self.dbNameTextbox.toPlainText())
                 self.dbName = self.dbNameTextbox.toPlainText()
                 self.dbNameLabel.setText(f"Current DB Name: {self.dbName}")
             except Exception as e:
                 self.error_dialog.showMessage(f"ERROR - {e}")
-        if self.conn is not None:
+        if self.database is not None:
             try:
                 # A connection in need of explain.py's output result function
                 #def explain(self, query, query2):
-                query, annotation = process(self.conn, self.queryTextbox.toPlainText())
+                query, annotation = process(self.database, self.queryTextbox.toPlainText())
                 self.queryOutput.setText('\n'.join(query))
-                self.queryAnnotate.setText('\n'.join(annotation))
+                self.queryExplain.setText('\n'.join(annotation))
             except Exception as e:
                 self.error_dialog.showMessage(f"ERROR - {e}")
 
+
+def process(database,query):
+    query_results=database.get_query_results(query)
+    final_query_result=[]
+    for i in query_results:
+        temp=""
+        for j in i:
+            temp+=str(j)+"|"
+        final_query_result.append(temp)
+    raw_explanation=database.get_query_results("explain "+query)
+    final_raw_explanation=[]
+    for i in raw_explanation:
+        final_raw_explanation.append(i[0])
+    return final_query_result,final_raw_explanation
     #def init_conn(db_name):
     #    db_uname, db_pass, db_host, db_port = import_config()
     #    conn = open_db(db_name, db_uname, db_pass, db_host, db_port)
