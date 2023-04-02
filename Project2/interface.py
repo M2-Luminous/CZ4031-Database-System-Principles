@@ -18,7 +18,7 @@ class ScrollableLabel(QScrollArea):
         layout = QVBoxLayout(widget)
         self.label = QLabel(widget)
         self.label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-        self.label.setFont(QFont('Arial', 15))
+        self.label.setFont(QFont('Arial', 12))
         self.label.setStyleSheet("background-color: beige; border: 1px solid black;")
         #self.input_sql = self.findChild(QTextEdit, "input_query")
         #self.label_qep = self.findChild(QLabel, "text_plan")
@@ -35,18 +35,20 @@ class ScrollableLabel(QScrollArea):
 class MyWindow(QMainWindow):
     def __init__(self):
         super(MyWindow, self).__init__()
-        self.setGeometry(300, 50, 1600, 900)  # xpos, ypos, width, height
-        self.setWindowTitle("Application GUI")
+        self.setGeometry(50, 50, 1800, 1000)  # xpos, ypos, width, height
+        self.setWindowTitle("CZ4031-Assignment2-Group 31")
 
         # Output text for query and annotation
-        self.queryOutput = ScrollableLabel(self)
+        self.queryOutput1 = ScrollableLabel(self)
+        self.queryOutput2 = ScrollableLabel(self)
         self.queryExplain = ScrollableLabel(self)
 
         # Button for running algorithm
         self.submitButton = QtWidgets.QPushButton(self)
 
         # Textbox for query and db name
-        self.queryTextbox = QTextEdit(self)
+        self.queryTextbox1 = QTextEdit(self)
+        self.queryTextbox2 = QTextEdit(self)
         self.dbNameTextbox = QTextEdit(self)
 
         # Label to indicate which db name is the app currently connected to
@@ -62,42 +64,59 @@ class MyWindow(QMainWindow):
         self.dbName = ''
 
     def UI(self):
-        self.queryTextbox.move(30, 20)
-        self.queryTextbox.resize(750, 350)
-        self.queryTextbox.setFont(QFont('Arial', 15))
-        self.queryTextbox.setPlaceholderText("Insert SQL Query Here :")
+        self.queryTextbox1.move(30, 5)
+        self.queryTextbox1.resize(700, 150)
+        self.queryTextbox1.setFont(QFont('Arial', 12))
+        self.queryTextbox1.setPlaceholderText("Insert SQL Query Q1 Here :")
 
-        self.dbNameTextbox.move(820, 140)
-        self.dbNameTextbox.resize(300, 100)
-        self.dbNameTextbox.setFont(QFont('Arial', 15))
+        self.queryTextbox2.move(740, 5)
+        self.queryTextbox2.resize(700, 150)
+        self.queryTextbox2.setFont(QFont('Arial', 12))
+        self.queryTextbox2.setPlaceholderText("Insert SQL Query Q2 Here :")
+
+        self.dbNameTextbox.move(1500, 5)
+        self.dbNameTextbox.resize(270, 150)
+        self.dbNameTextbox.setFont(QFont('Arial', 12))
         self.dbNameTextbox.setPlaceholderText("Insert Database Name Here :")
 
-        self.queryOutput.setText("Output Query :")
-        self.queryOutput.move(30, 400)
-        self.queryOutput.resize(770, 450)
-        self.queryOutput.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.queryOutput.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.queryOutput1.setText("Output Query Q1 :")
+        self.queryOutput1.move(30, 170)
+        self.queryOutput1.resize(700, 400)
+        self.queryOutput1.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.queryOutput1.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+
+        self.queryOutput2.setText("Output Query Q2 :")
+        self.queryOutput2.move(740, 170)
+        self.queryOutput2.resize(700, 400)
+        self.queryOutput2.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.queryOutput2.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 
         self.queryExplain.setText("Explain for Output Query :")
-        self.queryExplain.move(820, 400)
-        self.queryExplain.resize(750, 450)
+        self.queryExplain.move(30, 580)
+        self.queryExplain.resize(1410, 400)
         self.queryExplain.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.queryExplain.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 
-        self.queryOutput.verticalScrollBar().valueChanged.connect(
+
+        self.queryOutput1.verticalScrollBar().valueChanged.connect(
         self.queryExplain.verticalScrollBar().setValue)
         self.queryExplain.verticalScrollBar().valueChanged.connect(
-        self.queryOutput.verticalScrollBar().setValue)
+        self.queryOutput1.verticalScrollBar().setValue)
 
-        self.dbNameLabel.move(820, 20)
-        self.dbNameLabel.resize(300, 100)
+        self.queryOutput2.verticalScrollBar().valueChanged.connect(
+        self.queryExplain.verticalScrollBar().setValue)
+        self.queryExplain.verticalScrollBar().valueChanged.connect(
+        self.queryOutput2.verticalScrollBar().setValue)
+
+        self.dbNameLabel.move(1500, 170)
+        self.dbNameLabel.resize(270, 100)
         self.dbNameLabel.setText(f"Current Database Name: ")
 
         self.submitButton.setText("Submit Query")
-        self.submitButton.setFont(QFont('Arial', 15))
+        self.submitButton.setFont(QFont('Arial', 12))
         self.submitButton.clicked.connect(self.onClick)
-        self.submitButton.move(820, 270)
-        self.submitButton.resize(300, 100)
+        self.submitButton.move(1500, 700)
+        self.submitButton.resize(270, 100)
 
     def onClick(self):
         if self.dbName != self.dbNameTextbox.toPlainText():
@@ -111,9 +130,14 @@ class MyWindow(QMainWindow):
         if self.database is not None:
             try:
                 # A connection in need of explain.py's output result function
-                #def explain(self, query, query2):
-                query, annotation = process(self.database, self.queryTextbox.toPlainText())
-                self.queryOutput.setText('\n'.join(query))
+                # def explain(self, query, query2):
+                # Query 1
+                query, annotation = process(self.database, self.queryTextbox1.toPlainText())
+                self.queryOutput1.setText('\n'.join(query))
+                self.queryExplain.setText('\n'.join(annotation))
+                # Query 2
+                query, annotation = process(self.database, self.queryTextbox2.toPlainText())
+                self.queryOutput2.setText('\n'.join(query))
                 self.queryExplain.setText('\n'.join(annotation))
             except Exception as e:
                 self.error_dialog.showMessage(f"ERROR - {e}")
