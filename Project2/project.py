@@ -12,7 +12,7 @@ class Database:
         self.hostname="localhost"
         self.database=database_name
         self.username="postgres"
-        self.pwd="admin"
+        self.pwd="abc123"
         self.portid=5432
         self.conn=psycopg2.connect(
         host=self.hostname,

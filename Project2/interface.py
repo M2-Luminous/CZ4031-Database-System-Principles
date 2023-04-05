@@ -5,7 +5,7 @@ from PyQt5.QtCore import *
 import sys
 from project import *
 
-#from annotation import process, init_conn
+# from annotation import process, init_conn
 
 
 class ScrollableLabel(QScrollArea):
@@ -19,13 +19,14 @@ class ScrollableLabel(QScrollArea):
         self.label = QLabel(widget)
         self.label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.label.setFont(QFont('Arial', 12))
-        self.label.setStyleSheet("background-color: beige; border: 1px solid black;")
-        #self.input_sql = self.findChild(QTextEdit, "input_query")
-        #self.label_qep = self.findChild(QLabel, "text_plan")
-        #self.btn_analyse = self.findChild(QPushButton, "btn_analyse")
-        #self.btn_clear = self.findChild(QPushButton, "btn_clear")
-        #self.list_database = self.findChild(QComboBox, "combo_databases")
-        #self.tree_attrs = self.findChild(QTreeWidget, "tree_attrs")
+        self.label.setStyleSheet(
+            "background-color: beige; border: 1px solid black;")
+        # self.input_sql = self.findChild(QTextEdit, "input_query")
+        # self.label_qep = self.findChild(QLabel, "text_plan")
+        # self.btn_analyse = self.findChild(QPushButton, "btn_analyse")
+        # self.btn_clear = self.findChild(QPushButton, "btn_clear")
+        # self.list_database = self.findChild(QComboBox, "combo_databases")
+        # self.tree_attrs = self.findChild(QTreeWidget, "tree_attrs")
         layout.addWidget(self.label)
 
     def setText(self, text):
@@ -97,16 +98,15 @@ class MyWindow(QMainWindow):
         self.queryExplain.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.queryExplain.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 
-
         self.queryOutput1.verticalScrollBar().valueChanged.connect(
-        self.queryExplain.verticalScrollBar().setValue)
+            self.queryExplain.verticalScrollBar().setValue)
         self.queryExplain.verticalScrollBar().valueChanged.connect(
-        self.queryOutput1.verticalScrollBar().setValue)
+            self.queryOutput1.verticalScrollBar().setValue)
 
         self.queryOutput2.verticalScrollBar().valueChanged.connect(
-        self.queryExplain.verticalScrollBar().setValue)
+            self.queryExplain.verticalScrollBar().setValue)
         self.queryExplain.verticalScrollBar().valueChanged.connect(
-        self.queryOutput2.verticalScrollBar().setValue)
+            self.queryOutput2.verticalScrollBar().setValue)
 
         self.dbNameLabel.move(1500, 170)
         self.dbNameLabel.resize(270, 100)
@@ -122,7 +122,7 @@ class MyWindow(QMainWindow):
         if self.dbName != self.dbNameTextbox.toPlainText():
             try:
                 # A connection in need of explain.py's obtain message function
-                self.database=Database(self.dbNameTextbox.toPlainText())
+                self.database = Database(self.dbNameTextbox.toPlainText())
                 self.dbName = self.dbNameTextbox.toPlainText()
                 self.dbNameLabel.setText(f"Current DB Name: {self.dbName}")
             except Exception as e:
@@ -132,36 +132,48 @@ class MyWindow(QMainWindow):
                 # A connection in need of explain.py's output result function
                 # def explain(self, query, query2):
                 # Query 1
-                query, annotation = process(self.database, self.queryTextbox1.toPlainText())
+                query, annotation = process(
+                    self.database, self.queryTextbox1.toPlainText())
                 self.queryOutput1.setText('\n'.join(query))
                 self.queryExplain.setText('\n'.join(annotation))
-                # Query 2
-                query, annotation = process(self.database, self.queryTextbox2.toPlainText())
-                self.queryOutput2.setText('\n'.join(query))
-                self.queryExplain.setText('\n'.join(annotation))
+                # # Query 2
+                # query, annotation = process(self.database, self.queryTextbox2.toPlainText())
+                # self.queryOutput2.setText('\n'.join(query))
+                # self.queryExplain.setText('\n'.join(annotation))
+                # print(annotation[0][0])
             except Exception as e:
                 self.error_dialog.showMessage(f"ERROR - {e}")
 
 
-def process(database,query):
-    query_results=database.get_query_results(query)
-    final_query_result=[]
+def process(database, query):
+    query_results = database.get_query_results(query)
+    final_query_result = []
     for i in query_results:
-        temp=""
+        temp = ""
         for j in i:
-            temp+=str(j)+"|"
+            temp += str(j)+"|"
         final_query_result.append(temp)
-    raw_explanation=database.get_query_results("explain "+query)
-    final_raw_explanation=[]
+    raw_explanation = database.get_query_results(
+        "explain (analyze true , format json)"+query)
+    print(raw_explanation[0][0][0]['Plan'])
+    print("--------------")
+    print(raw_explanation[0][0][0]['Plan']['Plans'][0])
+    print("--------------")
+    print(raw_explanation[0][0][0]['Plan']['Plans'][1])
+    print("--------------")
+    print(raw_explanation[0][0][0]['Plan']['Plans'][1]['Plans'])
+
+    
+    final_raw_explanation = []
     for i in raw_explanation:
         final_raw_explanation.append(i[0])
-    return final_query_result,final_raw_explanation
-    #def init_conn(db_name):
+    return final_query_result, final_raw_explanation
+    # def init_conn(db_name):
     #    db_uname, db_pass, db_host, db_port = import_config()
     #    conn = open_db(db_name, db_uname, db_pass, db_host, db_port)
     #    return conn
 
-    #def showError(self, errMessage, execption=None):
+    # def showError(self, errMessage, execption=None):
     #    dialog = QMessageBox()
     #    dialog.setStyleSheet("QLabel{min-width: 300px;}");
     #    dialog.setWindowTitle("Error")
