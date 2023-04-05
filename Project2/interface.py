@@ -134,6 +134,7 @@ class MyWindow(QMainWindow):
                 # Query 1
                 query, annotation = process(
                     self.database, self.queryTextbox1.toPlainText())
+
                 self.queryOutput1.setText('\n'.join(query))
                 self.queryExplain.setText('\n'.join(annotation))
                 # # Query 2
@@ -155,7 +156,7 @@ def process(database, query):
         final_query_result.append(temp)
     raw_explanation = database.get_query_results(
         "explain (analyze true , format json)"+query)
-    print(raw_explanation[0][0][0]['Plan'])
+    print(raw_explanation[0][0][0])
     print("--------------")
     print(raw_explanation[0][0][0]['Plan']['Plans'][0])
     print("--------------")
@@ -163,7 +164,20 @@ def process(database, query):
     print("--------------")
     print(raw_explanation[0][0][0]['Plan']['Plans'][1]['Plans'])
 
-    
+    for Plans in raw_explanation[0][0]:
+        print("i am working")
+        print(Plans['Plan']['Node Type'])
+        for PlansIns in Plans['Plan']['Plans']:
+            print(PlansIns['Node Type'])
+            # if no plans skip  .. unsure how to implement.
+            if (PlansIns['Plans'] == null):
+                continue
+            for x in Plans['Plans']:
+                print(x)
+
+        # for PlansIns in Plans['Plans']:
+        #   print(PlansIns['Node Type'])
+
     final_raw_explanation = []
     for i in raw_explanation:
         final_raw_explanation.append(i[0])
