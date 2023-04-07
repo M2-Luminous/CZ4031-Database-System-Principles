@@ -11,14 +11,14 @@ class explain:
         def get_node_types(raw_explanation):
             node_types = []
             for Plans in raw_explanation[0][0]:
-              node_types.append(Plans['Plan']['Node Type'])
+              node_types.append(string_format(Plans['Plan']['Node Type']))
               for PlansIns in Plans['Plan']['Plans']:
-                node_types.append(PlansIns['Node Type'])
+                node_types.append(string_format(PlansIns['Node Type']))
                 # if no plans skip  .. unsure how to implement.
                 if (PlansIns.get('Plans') is None):
                     continue
                 for x in PlansIns['Plans']:
-                    node_types.append(x['Node Type'])
+                    node_types.append(string_format(x['Node Type']))
             print(node_types)
             return node_types
         
@@ -28,9 +28,10 @@ class explain:
             "explain (analyze true , format json)"+query2)
         print("node types in query 1:")
         node_types_query1 = get_node_types(raw_explanation_query1)
+        explanation = ','.join(node_types_query1) + " are performed in query 1. \n"
         print("node types in query 2:")
         node_types_query2 = get_node_types(raw_explanation_query2)
-        
+        explanation += ','.join(node_types_query2) + " are performed in query 2. \n"
         #compare node type
         print("compare query")
         nodes_in_query1 = []
@@ -44,15 +45,21 @@ class explain:
         node1 = '\n'.join(nodes_in_query1)
         node2 = '\n'.join(nodes_in_query2)
         if (node1 == "" and node2 == ""):
-            explanation = "No changes are made"
+            explanation += "No changes are made."
         elif (node1 == ""):
-            explanation = node2 + " was added in query 2"
+            explanation += node2 + " was added in query 2."
         elif (node2 == ""):
-            explanation = node1 + " in query 1 was removed"
+            explanation += node1 + " in query 1 was removed."
         else:
-            explanation = node1 + ' in query 1 has now evolved to ' + node2 + ' in query 2'
+            explanation += node1 + ' in query 1 has now evolved to ' + node2 + ' in query 2.'
         print(explanation)
         return explanation
+    
+def string_format(node_type):
+    if node_type == 'Seq Scan':
+        return "Sequential Scan"
+    else:
+        return node_type
         #output = ""
         #explanation = ""
         #if query["Node Type"] == 'Seq Scan':
