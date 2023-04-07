@@ -4,7 +4,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import sys
 from project import *
-#from explain import explain
+from explain import *
 
 # from annotation import process, init_conn
 
@@ -137,7 +137,8 @@ class MyWindow(QMainWindow):
                 #    self.database, self.queryTextbox1.toPlainText())
                 #query2, annotation2, node_types2 = process(
                 #    self.database, self.queryTextbox2.toPlainText())
-                explanation = explain(self.database, self.queryTextbox1.toPlainText(), self.queryTextbox2.toPlainText())
+                explain_class = explain()
+                explanation = explain_class.explain(self.database, self.queryTextbox1.toPlainText(), self.queryTextbox2.toPlainText())
                 #self.queryOutput1.setText('\n'.join(query))
                 self.queryExplain.setText(explanation)
                 # # Query 2
@@ -148,45 +149,45 @@ class MyWindow(QMainWindow):
             except Exception as e:
                 self.error_dialog.showMessage(f"ERROR - {e}")
 
-def explain(database, query1, query2):
-    print("working on explain")
-    def get_node_types(raw_explanation):
-        node_types = []
-        for Plans in raw_explanation[0][0]:
-          node_types.append(Plans['Plan']['Node Type'])
-          for PlansIns in Plans['Plan']['Plans']:
-            node_types.append(PlansIns['Node Type'])
-            # if no plans skip  .. unsure how to implement.
-            if (PlansIns.get('Plans') is None):
-                continue
-            for x in PlansIns['Plans']:
-                node_types.append(x['Node Type'])
-        print('print: print nodes in node_types')
-        print(node_types)
-        print('finishes')
-        return node_types
-    raw_explanation_query1 = database.get_query_results(
-        "explain (analyze true , format json)"+query1)
-    raw_explanation_query2 = database.get_query_results(
-        "explain (analyze true , format json)"+query2)
-    node_types_query1 = get_node_types(raw_explanation_query1)
-    node_types_query2 = get_node_types(raw_explanation_query2)
-    
-    #compare node typeF
-    print("compare query")
-    nodes_in_query1 = []
-    nodes_in_query2 = []
-    for i in node_types_query1:
-        if i not in node_types_query2:
-            nodes_in_query1.append(i)
-    for j in node_types_query2:
-        if j not in node_types_query1:
-            nodes_in_query2.append(j)
-    node1 = '\n'.join(nodes_in_query1)
-    node2 = '\n'.join(nodes_in_query2)
-    explanation = node1 + ' in query 1 has now evolved to ' + node2 + ' in query 2'
-    print(explanation)
-    return explanation
+#def explain(database, query1, query2):
+#    print("working on explain")
+#    def get_node_types(raw_explanation):
+#        node_types = []
+#        for Plans in raw_explanation[0][0]:
+#          node_types.append(Plans['Plan']['Node Type'])
+#          for PlansIns in Plans['Plan']['Plans']:
+#            node_types.append(PlansIns['Node Type'])
+#            # if no plans skip  .. unsure how to implement.
+#            if (PlansIns.get('Plans') is None):
+#                continue
+#            for x in PlansIns['Plans']:
+#                node_types.append(x['Node Type'])
+#        print('print: print nodes in node_types')
+#        print(node_types)
+#        print('finishes')
+#        return node_types
+#    raw_explanation_query1 = database.get_query_results(
+#        "explain (analyze true , format json)"+query1)
+#    raw_explanation_query2 = database.get_query_results(
+#        "explain (analyze true , format json)"+query2)
+#    node_types_query1 = get_node_types(raw_explanation_query1)
+#    node_types_query2 = get_node_types(raw_explanation_query2)
+#    
+#    #compare node typeF
+#    print("compare query")
+#    nodes_in_query1 = []
+#    nodes_in_query2 = []
+#    for i in node_types_query1:
+#        if i not in node_types_query2:
+#            nodes_in_query1.append(i)
+#    for j in node_types_query2:
+#        if j not in node_types_query1:
+#            nodes_in_query2.append(j)
+#    node1 = '\n'.join(nodes_in_query1)
+#    node2 = '\n'.join(nodes_in_query2)
+#    explanation = node1 + ' in query 1 has now evolved to ' + node2 + ' in query 2'
+#    print(explanation)
+#    return explanation
 
 def process(database, query):
     query_results = database.get_query_results(query)

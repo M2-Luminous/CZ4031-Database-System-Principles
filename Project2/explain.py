@@ -1,10 +1,12 @@
 #The explain.py contains the code for generating the explanation.
+from interface import *
+from project import *
 class explain:
 
     #def _init_(self):
     #    self.count = 0
         
-    def explain(database, query1, query2):
+    def explain(self, database, query1, query2):
         print("working on explain")
         def get_node_types(raw_explanation):
             node_types = []
@@ -17,9 +19,9 @@ class explain:
                     continue
                 for x in PlansIns['Plans']:
                     node_types.append(x['Node Type'])
-            print('finishes')
-            print('print nodes in node_types')
+            print('print: print nodes in node_types')
             print(node_types)
+            print('finishes')
             return node_types
         raw_explanation_query1 = database.get_query_results(
             "explain (analyze true , format json)"+query1)
@@ -28,16 +30,19 @@ class explain:
         node_types_query1 = get_node_types(raw_explanation_query1)
         node_types_query2 = get_node_types(raw_explanation_query2)
         
-        #compare node type
+        #compare node typeF
+        print("compare query")
         nodes_in_query1 = []
         nodes_in_query2 = []
         for i in node_types_query1:
             if i not in node_types_query2:
-                nodes_in_query1.append(node_types_query1[i])
+                nodes_in_query1.append(i)
         for j in node_types_query2:
             if j not in node_types_query1:
-                nodes_in_query2.append(node_types_query2[j])
-        explanation = nodes_in_query1 + ' in query 1 has now evolved to ' + nodes_in_query2 + ' in query 2'
+                nodes_in_query2.append(j)
+        node1 = '\n'.join(nodes_in_query1)
+        node2 = '\n'.join(nodes_in_query2)
+        explanation = node1 + ' in query 1 has now evolved to ' + node2 + ' in query 2'
         print(explanation)
         return explanation
         #output = ""
