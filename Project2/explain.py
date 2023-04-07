@@ -1,6 +1,5 @@
 #The explain.py contains the code for generating the explanation.
-from interface import *
-from project import *
+
 class explain:
 
     #def _init_(self):
@@ -8,6 +7,7 @@ class explain:
         
     def explain(self, database, query1, query2):
         print("working on explain")
+
         def get_node_types(raw_explanation):
             node_types = []
             for Plans in raw_explanation[0][0]:
@@ -19,18 +19,19 @@ class explain:
                     continue
                 for x in PlansIns['Plans']:
                     node_types.append(x['Node Type'])
-            print('print: print nodes in node_types')
             print(node_types)
-            print('finishes')
             return node_types
+        
         raw_explanation_query1 = database.get_query_results(
             "explain (analyze true , format json)"+query1)
         raw_explanation_query2 = database.get_query_results(
             "explain (analyze true , format json)"+query2)
+        print("node types in query 1:")
         node_types_query1 = get_node_types(raw_explanation_query1)
+        print("node types in query 2:")
         node_types_query2 = get_node_types(raw_explanation_query2)
         
-        #compare node typeF
+        #compare node type
         print("compare query")
         nodes_in_query1 = []
         nodes_in_query2 = []
@@ -42,7 +43,14 @@ class explain:
                 nodes_in_query2.append(j)
         node1 = '\n'.join(nodes_in_query1)
         node2 = '\n'.join(nodes_in_query2)
-        explanation = node1 + ' in query 1 has now evolved to ' + node2 + ' in query 2'
+        if (node1 == "" and node2 == ""):
+            explanation = "No changes are made"
+        elif (node1 == ""):
+            explanation = node2 + " was added in query 2"
+        elif (node2 == ""):
+            explanation = node1 + " in query 1 was removed"
+        else:
+            explanation = node1 + ' in query 1 has now evolved to ' + node2 + ' in query 2'
         print(explanation)
         return explanation
         #output = ""
@@ -120,13 +128,13 @@ class explain:
         #
         #elif query["Node Type"] == 'Nested Loop':
         #    explanation += "a nexted loop join in P1"
-#
+
         #elif query["Node Type"] == 'Hash Join':
         #    explanation += "a hash join in P1"
-#
+
         #elif query["Node Type"] == 'Merge Join':
         #    explanation += "a merge join in P1"
-#
+
         #explanation += "has now evolved to "
 
         # if query2["Node Type"] == 'Seq Scan':
