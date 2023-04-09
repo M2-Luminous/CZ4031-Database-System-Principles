@@ -9,34 +9,39 @@ class explain:
         print("working on explain")
 
         def get_node_types(raw_explanation):
+            node_types_time = []
             node_types = []
             for Plans in raw_explanation[0][0]:
-                node_types=get_node_helper(Plans['Plan'])
-            return node_types
+                node_types_time, node_types=get_node_helper(Plans['Plan'])
+            return node_types_time, node_types
         
         def get_node_helper(raw_explanation):
+            return_list_time=[]
             return_list=[]
             if (raw_explanation.get('Plans') is None):
-                return [raw_explanation['Node Type']+'('+str(raw_explanation['Actual Total Time'])+'miliseconds)']
+                return [raw_explanation['Node Type']+'('+str(raw_explanation['Actual Total Time'])+'miliseconds)'], [raw_explanation['Node Type']]
             for Plans in raw_explanation.get('Plans'):
-                temp=get_node_helper(Plans)
+                temp, temp2=get_node_helper(Plans)
                 if isinstance(temp,list):
                     for i in temp:
+                        return_list_time.append(i)
+                    for i in temp2:
                         return_list.append(i)
-            return_list.append(raw_explanation['Node Type']+'('+str(raw_explanation['Actual Total Time'])+'miliseconds)')
-            return return_list
+            return_list_time.append(raw_explanation['Node Type']+'('+str(raw_explanation['Actual Total Time'])+'miliseconds)')
+            return_list.append(raw_explanation['Node Type'])
+            return return_list_time, return_list
 
         raw_explanation_query1 = database.get_query_results(
             "explain (analyze true , format json) "+query1)
         raw_explanation_query2 = database.get_query_results(
             "explain (analyze true , format json) "+query2)
         print("node types in query 1:")
-        node_types_query1 = get_node_types(raw_explanation_query1)
-        explanation = ', '.join(node_types_query1) + \
+        node_types_time_query1, node_types_query1 = get_node_types(raw_explanation_query1)
+        explanation = ', '.join(node_types_time_query1) + \
             " are performed in query 1. \n"
         print("node types in query 2:")
-        node_types_query2 = get_node_types(raw_explanation_query2)
-        explanation += ', '.join(node_types_query2) + \
+        node_types_time_query2, node_types_query2 = get_node_types(raw_explanation_query2)
+        explanation += ', '.join(node_types_time_query2) + \
             " are performed in query 2. \n"
         # compare node type
         print("compare query")
@@ -53,9 +58,15 @@ class explain:
         if (node1 == "" and node2 == ""):
             explanation += "No changes are made."
         elif (node1 == ""):
-            explanation += node2 + " was added in query 2."
+            explanation += node2 + " was added in query 2"
+            for i in nodes_in_query2:
+                if (i == "Gather"):
+                    explanation += " because parallel execution was enabled"
         elif (node2 == ""):
-            explanation += node1 + " in query 1 was removed."
+            explanation += node1 + " in query 1 was removed"
+            for i in nodes_in_query1:
+                if (i == "Gather"):
+                    explanation += " because parallel execution was disabled"
         else:
             explanation += node1 + ' in query 1 has now evolved to ' + node2 + ' in query 2.'
         
