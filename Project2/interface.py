@@ -5,6 +5,7 @@ from PyQt5.QtCore import *
 import sys
 from project import *
 from explain import *
+import traceback
 
 # from annotation import process, init_conn
 
@@ -148,10 +149,19 @@ class MyWindow(QMainWindow):
                 # print(query)
                 print(type(query))
                 query_str = ''
+                query_str2 = ''
+                j=0
                 for x in query:
-                    query_str += ' ' + x
+                    query_str += '\n' + x
+                    if len(query_str)>1000:
+                        break
+                for x in query2:
+                    query_str2 += '\n' + x
+                    if len(query_str2)>1000:
+                        break
 
                 self.queryOutput1.setText(query_str)
+                self.queryOutput2.setText(query_str2)
                 # self.queryOutput1.setText(query)
                 # self.queryOutput2.setText(query2)
                 # self.queryOutput1.setText(explanation[0])
@@ -163,6 +173,7 @@ class MyWindow(QMainWindow):
                 # self.queryExplain.setText('\n'.join(annotation))
                 # print(annotation[0][0])
             except Exception as e:
+                traceback.print_exc()
                 self.error_dialog.showMessage(f"ERROR - {e}")
 
 

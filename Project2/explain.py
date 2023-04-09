@@ -11,16 +11,22 @@ class explain:
         def get_node_types(raw_explanation):
             node_types = []
             for Plans in raw_explanation[0][0]:
-                node_types.append(string_format(Plans['Plan']['Node Type']))
-                for PlansIns in Plans['Plan']['Plans']:
-                    node_types.append(string_format(PlansIns['Node Type']))
-                    # if no plans skip  .. unsure how to implement.
-                    if (PlansIns.get('Plans') is None):
-                        continue
-                    for x in PlansIns['Plans']:
-                        node_types.append(string_format(x['Node Type']))
-            print(node_types)
+                node_types=get_node_helper(Plans['Plan'])
             return node_types
+        
+        def get_node_helper(raw_explanation):
+            return_list=[]
+            if (raw_explanation.get('Plans') is None):
+                return raw_explanation['Node Type']
+            for Plans in raw_explanation.get('Plans'):
+                temp=get_node_helper(Plans)
+                if isinstance(temp,list):
+                    for i in temp:
+                        return_list.append(i)
+                else:
+                    return_list.append(temp)
+            return_list.append(raw_explanation['Node Type'])
+            return return_list
 
         raw_explanation_query1 = database.get_query_results(
             "explain (analyze true , format json) "+query1)
