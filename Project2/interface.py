@@ -133,16 +133,27 @@ class MyWindow(QMainWindow):
                 # A connection in need of explain.py's output result function
                 # def explain(self, query, query2):
                 # Query 1
-                #query, annotation = process(
+                # query, annotation = process(
                 #    self.database, self.queryTextbox1.toPlainText())
-                #self.queryOutput1.setText('\n'.join(query))
-                #self.queryExplain.setText('\n'.join(annotation))
+                # self.queryOutput1.setText('\n'.join(query))
+                # self.queryExplain.setText('\n'.join(annotation))
                 explain_class = explain()
-                explanation = explain_class.explain(self.database, self.queryTextbox1.toPlainText(), self.queryTextbox2.toPlainText())
-                self.queryExplain.setText(explanation[2])
-                print(explanation[0])
-                self.queryOutput1.setText(explanation[0])
-                self.queryOutput2.setText(explanation[1])
+                query, annotation = process(
+                    self.database, self.queryTextbox1.toPlainText())
+                query2, annotation = process(
+                    self.database, self.queryTextbox2.toPlainText())
+                explanation = explain_class.explain(
+                    self.database, self.queryTextbox1.toPlainText(), self.queryTextbox2.toPlainText())
+                self.queryExplain.setText(explanation)
+                # print(query)
+                print(type(query))
+                query_str = ''
+                for x in query:
+                    query_str += ' ' + x
+
+                self.queryOutput1.setText(query_str)
+                # self.queryOutput1.setText(query)
+                # self.queryOutput2.setText(query2)
                 # self.queryOutput1.setText(explanation[0])
                 # self.queryOutput2.setText(explanation[1])
 
@@ -154,6 +165,7 @@ class MyWindow(QMainWindow):
             except Exception as e:
                 self.error_dialog.showMessage(f"ERROR - {e}")
 
+
 def process(database, query):
     query_results = database.get_query_results(query)
     final_query_result = []
@@ -163,14 +175,14 @@ def process(database, query):
             temp += str(j)+"|"
         final_query_result.append(temp)
     raw_explanation = database.get_query_results(
-        "explain (analyze true , format json)"+ query)
-    print(raw_explanation[0][0][0])
-    print("--------------")
-    print(raw_explanation[0][0][0]['Plan']['Plans'][0])
-    print("--------------")
-    print(raw_explanation[0][0][0]['Plan']['Plans'][1])
-    print("--------------")
-    print(raw_explanation[0][0][0]['Plan']['Plans'][1]['Plans'])
+        "explain (analyze true , format json)" + query)
+    # print(raw_explanation[0][0][0])
+    # print("--------------")
+    # print(raw_explanation[0][0][0]['Plan']['Plans'][0])
+    # print("--------------")
+    # print(raw_explanation[0][0][0]['Plan']['Plans'][1])
+    # print("--------------")
+    # print(raw_explanation[0][0][0]['Plan']['Plans'][1]['Plans'])
 
     # for Plans in raw_explanation[0][0]:
     #     print("i am working")
@@ -183,8 +195,8 @@ def process(database, query):
     #         for x in Plans['Plans']:
     #             print(x)
 
-        # for PlansIns in Plans['Plans']:
-        #   print(PlansIns['Node Type'])
+    # for PlansIns in Plans['Plans']:
+    #   print(PlansIns['Node Type'])
 
     final_raw_explanation = []
     for i in raw_explanation:
