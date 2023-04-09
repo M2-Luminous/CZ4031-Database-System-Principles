@@ -17,14 +17,12 @@ class explain:
         def get_node_helper(raw_explanation):
             return_list=[]
             if (raw_explanation.get('Plans') is None):
-                return raw_explanation['Node Type']+'('+str(raw_explanation['Actual Total Time'])+'miliseconds)'
+                return [raw_explanation['Node Type']+'('+str(raw_explanation['Actual Total Time'])+'miliseconds)']
             for Plans in raw_explanation.get('Plans'):
                 temp=get_node_helper(Plans)
                 if isinstance(temp,list):
                     for i in temp:
                         return_list.append(i)
-                else:
-                    return_list.append(temp)
             return_list.append(raw_explanation['Node Type']+'('+str(raw_explanation['Actual Total Time'])+'miliseconds)')
             return return_list
 
