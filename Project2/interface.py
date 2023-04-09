@@ -139,7 +139,13 @@ class MyWindow(QMainWindow):
                 #self.queryExplain.setText('\n'.join(annotation))
                 explain_class = explain()
                 explanation = explain_class.explain(self.database, self.queryTextbox1.toPlainText(), self.queryTextbox2.toPlainText())
-                self.queryExplain.setText(explanation)
+                self.queryExplain.setText(explanation[2])
+                print(explanation[0])
+                self.queryOutput1.setText(explanation[0])
+                self.queryOutput2.setText(explanation[1])
+                # self.queryOutput1.setText(explanation[0])
+                # self.queryOutput2.setText(explanation[1])
+
                 # # Query 2
                 # query, annotation = process(self.database, self.queryTextbox2.toPlainText())
                 # self.queryOutput2.setText('\n'.join(query))
@@ -157,7 +163,7 @@ def process(database, query):
             temp += str(j)+"|"
         final_query_result.append(temp)
     raw_explanation = database.get_query_results(
-        "explain (analyze true , format json)"+query)
+        "explain (analyze true , format json)"+ query)
     print(raw_explanation[0][0][0])
     print("--------------")
     print(raw_explanation[0][0][0]['Plan']['Plans'][0])
@@ -166,16 +172,16 @@ def process(database, query):
     print("--------------")
     print(raw_explanation[0][0][0]['Plan']['Plans'][1]['Plans'])
 
-    for Plans in raw_explanation[0][0]:
-        print("i am working")
-        print(Plans['Plan']['Node Type'])
-        for PlansIns in Plans['Plan']['Plans']:
-            print(PlansIns['Node Type'])
-            # if no plans skip  .. unsure how to implement.
-            if (PlansIns['Plans'] == null):
-                continue
-            for x in Plans['Plans']:
-                print(x)
+    # for Plans in raw_explanation[0][0]:
+    #     print("i am working")
+    #     print(Plans['Plan']['Node Type'])
+    #     for PlansIns in Plans['Plan']['Plans']:
+    #         print(PlansIns['Node Type'])
+    #         # if no plans skip  .. unsure how to implement.
+    #         if (PlansIns['Plans'] == null):
+    #             continue
+    #         for x in Plans['Plans']:
+    #             print(x)
 
         # for PlansIns in Plans['Plans']:
         #   print(PlansIns['Node Type'])

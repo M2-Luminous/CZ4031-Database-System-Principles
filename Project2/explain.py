@@ -23,9 +23,9 @@ class explain:
             return node_types
         
         raw_explanation_query1 = database.get_query_results(
-            "explain (analyze true , format json)"+query1)
+            "explain (analyze true , format json) "+query1)
         raw_explanation_query2 = database.get_query_results(
-            "explain (analyze true , format json)"+query2)
+            "explain (analyze true , format json) "+query2)
         print("node types in query 1:")
         node_types_query1 = get_node_types(raw_explanation_query1)
         explanation = ','.join(node_types_query1) + " are performed in query 1. \n"
@@ -52,8 +52,10 @@ class explain:
             explanation += node1 + " in query 1 was removed."
         else:
             explanation += node1 + ' in query 1 has now evolved to ' + node2 + ' in query 2.'
-        print(explanation)
-        return explanation
+        print(type(explanation))
+        print(type(query1))
+        List = [query1,query2,explanation]
+        return List
     
 def string_format(node_type):
     if node_type == 'Seq Scan':
