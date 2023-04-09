@@ -17,7 +17,7 @@ class explain:
         def get_node_helper(raw_explanation):
             return_list=[]
             if (raw_explanation.get('Plans') is None):
-                return raw_explanation['Node Type']
+                return raw_explanation['Node Type']+'('+str(raw_explanation['Actual Total Time'])+'miliseconds)'
             for Plans in raw_explanation.get('Plans'):
                 temp=get_node_helper(Plans)
                 if isinstance(temp,list):
@@ -25,7 +25,7 @@ class explain:
                         return_list.append(i)
                 else:
                     return_list.append(temp)
-            return_list.append(raw_explanation['Node Type'])
+            return_list.append(raw_explanation['Node Type']+'('+str(raw_explanation['Actual Total Time'])+'miliseconds)')
             return return_list
 
         raw_explanation_query1 = database.get_query_results(
@@ -34,11 +34,11 @@ class explain:
             "explain (analyze true , format json) "+query2)
         print("node types in query 1:")
         node_types_query1 = get_node_types(raw_explanation_query1)
-        explanation = ','.join(node_types_query1) + \
+        explanation = ', '.join(node_types_query1) + \
             " are performed in query 1. \n"
         print("node types in query 2:")
         node_types_query2 = get_node_types(raw_explanation_query2)
-        explanation += ','.join(node_types_query2) + \
+        explanation += ', '.join(node_types_query2) + \
             " are performed in query 2. \n"
         # compare node type
         print("compare query")
