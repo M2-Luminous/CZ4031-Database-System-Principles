@@ -5,6 +5,9 @@ class explain:
     # def _init_(self):
     #    self.count = 0
 
+
+
+
     def explain(self, database, query1, query2):
         print("working on explain")
 
@@ -18,8 +21,10 @@ class explain:
         def get_node_helper(raw_explanation):
             return_list_time=[]
             return_list=[]
+            add_to_list_time=[]
+            add_to_list=[]
             if (raw_explanation.get('Plans') is None):
-                return [raw_explanation['Node Type']+'('+str(raw_explanation['Actual Total Time'])+'miliseconds)'], [raw_explanation['Node Type']]
+                return [raw_explanation['Node Type']+' on '+raw_explanation['Alias']+' ('+str(raw_explanation['Actual Total Time'])+'miliseconds)'], [raw_explanation['Node Type']+' on '+raw_explanation['Alias']]
             for Plans in raw_explanation.get('Plans'):
                 temp, temp2=get_node_helper(Plans)
                 if isinstance(temp,list):
@@ -27,9 +32,21 @@ class explain:
                         return_list_time.append(i)
                     for i in temp2:
                         return_list.append(i)
-            return_list_time.append(raw_explanation['Node Type']+'('+str(raw_explanation['Actual Total Time'])+'miliseconds)')
-            return_list.append(raw_explanation['Node Type'])
+                add_to_list_time.append(temp[-1].replace('\n','\n    '))
+                add_to_list.append(temp2[-1].replace('\n','\n    '))
+            return_list_time.append(raw_explanation['Node Type']+' ('+str(raw_explanation['Actual Total Time'])+'miliseconds)'+' on '+'\n    ->'+add_to_list_time[0]+'\n    ->'+add_to_list_time[1])
+            return_list.append(raw_explanation['Node Type']+' on \n    ->'+add_to_list[0]+'\n    ->'+add_to_list[1])
             return return_list_time, return_list
+        
+            
+        def check_depth(query):
+            max_depth=0
+            for i in query:
+                if "->"in i:
+                    spaces=i.split("->")[0]
+                    if len(spaces)/4+1>max_depth:
+                        max_depth=len(spaces)/4+1
+            return int(max_depth)
 
         raw_explanation_query1 = database.get_query_results(
             "explain (analyze true , format json) "+query1)
@@ -37,39 +54,43 @@ class explain:
             "explain (analyze true , format json) "+query2)
         print("node types in query 1:")
         node_types_time_query1, node_types_query1 = get_node_types(raw_explanation_query1)
-        explanation = ', '.join(node_types_time_query1) + \
-            " are performed in query 1. \n"
+        explanation="These operations are performed on query 1:\n"
+        explanation += node_types_time_query1[-1] + "\n\n"
         print("node types in query 2:")
         node_types_time_query2, node_types_query2 = get_node_types(raw_explanation_query2)
-        explanation += ', '.join(node_types_time_query2) + \
-            " are performed in query 2. \n"
+        explanation +="These operations are performed on query 2:\n"
+        explanation += node_types_time_query2[-1] + "\n\n"
         # compare node type
         print("compare query")
         nodes_in_query1 = []
         nodes_in_query2 = []
-        for i in node_types_query1:
-            if i not in node_types_query2:
+        split_node_types_query1=node_types_query1[-1].split('\n')
+        split_node_types_query2=node_types_query2[-1].split('\n')
+        for i in split_node_types_query1:
+            if i not in split_node_types_query2:
                 nodes_in_query1.append(i)
-        for j in node_types_query2:
-            if j not in node_types_query1:
+        for j in split_node_types_query2:
+            if j not in split_node_types_query1:
                 nodes_in_query2.append(j)
         node1 = '\n'.join(nodes_in_query1)
         node2 = '\n'.join(nodes_in_query2)
         if (node1 == "" and node2 == ""):
             explanation += "No changes are made."
         elif (node1 == ""):
-            explanation += node2 + " was added in query 2"
+            explanation += node2 + "\n was added in query 2"
             for i in nodes_in_query2:
                 if (i == "Gather"):
                     explanation += " because parallel execution was enabled"
         elif (node2 == ""):
-            explanation += node1 + " in query 1 was removed"
+            explanation += node1 + "\n in query 1 was removed"
             for i in nodes_in_query1:
                 if (i == "Gather"):
                     explanation += " because parallel execution was disabled"
         else:
-            explanation += node1 + ' in query 1 has now evolved to ' + node2 + ' in query 2.'
+            explanation += node1 + '\n in query 1 has now evolved to \n' + node2 + '\n in query 2.\n\n'
         
+        explanation += 'Query 1 has a depth of '+str(check_depth(split_node_types_query1))+' while Query 2 has a depth of '+str(check_depth(split_node_types_query2))
+
         return explanation
 
 
