@@ -34,8 +34,12 @@ class explain:
                         return_list.append(i)
                 add_to_list_time.append(temp[-1].replace('\n','\n    '))
                 add_to_list.append(temp2[-1].replace('\n','\n    '))
-            return_list_time.append(raw_explanation['Node Type']+' ('+str(raw_explanation['Actual Total Time'])+'miliseconds)'+' on '+'\n    ->'+add_to_list_time[0]+'\n    ->'+add_to_list_time[1])
-            return_list.append(raw_explanation['Node Type']+' on \n    ->'+add_to_list[0]+'\n    ->'+add_to_list[1])
+            if len(add_to_list_time)==2:
+                return_list_time.append(raw_explanation['Node Type']+' ('+str(raw_explanation['Actual Total Time'])+'miliseconds)'+' on '+'\n    ->'+add_to_list_time[0]+'\n    ->'+add_to_list_time[1])
+                return_list.append(raw_explanation['Node Type']+' on \n    ->'+add_to_list[0]+'\n    ->'+add_to_list[1])
+            else:  
+                return_list_time.append(raw_explanation['Node Type']+' ('+str(raw_explanation['Actual Total Time'])+'miliseconds)'+' on '+'\n    ->'+add_to_list_time[0])
+                return_list.append(raw_explanation['Node Type']+' on \n    ->'+add_to_list[0])
             return return_list_time, return_list
         
             
@@ -90,8 +94,30 @@ class explain:
             explanation += node1 + '\n in query 1 has now evolved to \n' + node2 + '\n in query 2.\n\n'
         
         if check_depth(split_node_types_query1)!=check_depth(split_node_types_query2):
-            explanation += 'Query 1 has a depth of '+str(check_depth(split_node_types_query1))+' while Query 2 has a depth of '+str(check_depth(split_node_types_query2))
+            explanation += 'Query 1 has a depth of '+str(check_depth(split_node_types_query1))+' while Query 2 has a depth of '+str(check_depth(split_node_types_query2))+'.\n'
+        
 
+        same_operation_diff_depth=[]
+        for i in nodes_in_query1:
+            for j in nodes_in_query2:
+                try:
+                    temp1=i.split('->')[1]
+                    temp2=j.split('->')[1]
+                except:
+                    continue
+                if (temp1==temp2) and temp1 not in same_operation_diff_depth:
+                    nodes_in_query1.remove(i)
+                    nodes_in_query2.remove(j)
+                    same_operation_diff_depth.append(temp1)
+                    explanation += temp1.replace('->','') + ' in Query 1 executed at the depth of '+str(check_depth([i]))+' while this is executed in the depth of '+str(check_depth([j]))+' in Query 2.\n'
+        
+        explanation+="\nThese operations are unique to query 1:\n"
+        for i in nodes_in_query1:
+            explanation+=i+'\n'
+
+        explanation+="\nThese operatrions are unique to query 2:\n"
+        for i in nodes_in_query2:
+            explanation+=i+'\n'
         return explanation
 
 
