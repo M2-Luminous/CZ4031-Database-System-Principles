@@ -89,7 +89,8 @@ class explain:
         else:
             explanation += node1 + '\n in query 1 has now evolved to \n' + node2 + '\n in query 2.\n\n'
         
-        explanation += 'Query 1 has a depth of '+str(check_depth(split_node_types_query1))+' while Query 2 has a depth of '+str(check_depth(split_node_types_query2))
+        if check_depth(split_node_types_query1)!=check_depth(split_node_types_query2):
+            explanation += 'Query 1 has a depth of '+str(check_depth(split_node_types_query1))+' while Query 2 has a depth of '+str(check_depth(split_node_types_query2))
 
         return explanation
 
