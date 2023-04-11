@@ -1,5 +1,5 @@
 # The explain.py contains the code for generating the explanation.
-
+import copy
 class explain:
 
     # def _init_(self):
@@ -82,24 +82,22 @@ class explain:
             explanation += "No changes are made."
         elif (node1 == ""):
             explanation += node2 + "\n was added in query 2"
-            for i in nodes_in_query2:
-                if (i == "Gather"):
-                    explanation += " because parallel execution was enabled"
         elif (node2 == ""):
             explanation += node1 + "\n in query 1 was removed"
-            for i in nodes_in_query1:
-                if (i == "Gather"):
-                    explanation += " because parallel execution was disabled"
         else:
             explanation += node1 + '\n in query 1 has now evolved to \n' + node2 + '\n in query 2.\n\n'
         
+
+
         if check_depth(split_node_types_query1)!=check_depth(split_node_types_query2):
             explanation += 'Query 1 has a depth of '+str(check_depth(split_node_types_query1))+' while Query 2 has a depth of '+str(check_depth(split_node_types_query2))+'.\n'
         
 
         same_operation_diff_depth=[]
-        for i in nodes_in_query1:
-            for j in nodes_in_query2:
+        temp_nodes_in_query1=copy.deepcopy(nodes_in_query1)
+        temp_nodes_in_query2=copy.deepcopy(nodes_in_query2)
+        for i in temp_nodes_in_query1:
+            for j in temp_nodes_in_query2:                
                 try:
                     temp1=i.split('->')[1]
                     temp2=j.split('->')[1]
@@ -109,16 +107,28 @@ class explain:
                     nodes_in_query1.remove(i)
                     nodes_in_query2.remove(j)
                     same_operation_diff_depth.append(temp1)
-                    explanation += temp1.replace('->','') + ' in Query 1 executed at the depth of '+str(check_depth([i]))+' while this is executed in the depth of '+str(check_depth([j]))+' in Query 2.\n'
+                    explanation += temp1 + ' in Query 1 executed at the depth of '+str(check_depth([i]))+' while this is executed in the depth of '+str(check_depth([j]))+' in Query 2.\n'
+                    break
         
-        explanation+="\nThese operations are unique to query 1:\n"
         for i in nodes_in_query1:
-            explanation+=i+'\n'
-
-        explanation+="\nThese operatrions are unique to query 2:\n"
+            if ("Gather" in i):
+                explanation += "Gather because parallel execution was enable for Query 1\n"
+            
         for i in nodes_in_query2:
-            explanation+=i+'\n'
+            if ("Gather" in i):
+                explanation += "Gather because parallel execution was enabledfor Query 2\n"
+        
+
+        if len(nodes_in_query1)!=0:
+            explanation+="\nThese operations are unique to query 1:\n"  
+            for i in nodes_in_query1:
+                explanation+=i+'\n'
+        if len(nodes_in_query2)!=0:
+            explanation+="\nThese operations are unique to query 2:\n"
+            for i in nodes_in_query2:
+                explanation+=i+'\n'
         return explanation
+    
 
 
 def string_format(node_type):
