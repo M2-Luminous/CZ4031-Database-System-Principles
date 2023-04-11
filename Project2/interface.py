@@ -23,12 +23,7 @@ class ScrollableLabel(QScrollArea):
         self.label.setFont(QFont('Arial', 12))
         self.label.setStyleSheet(
             "background-color: beige; border: 1px solid black;")
-        # self.input_sql = self.findChild(QTextEdit, "input_query")
-        # self.label_qep = self.findChild(QLabel, "text_plan")
-        # self.btn_analyse = self.findChild(QPushButton, "btn_analyse")
-        # self.btn_clear = self.findChild(QPushButton, "btn_clear")
-        # self.list_database = self.findChild(QComboBox, "combo_databases")
-        # self.tree_attrs = self.findChild(QTreeWidget, "tree_attrs")
+
         layout.addWidget(self.label)
 
     def setText(self, text):
@@ -65,6 +60,13 @@ class MyWindow(QMainWindow):
         # Db connection settings
         self.database = None
         self.dbName = ''
+
+        self.refreshButton = QtWidgets.QPushButton(self)
+        self.refreshButton.setText("Refresh")
+        self.refreshButton.setFont(QFont('Arial', 12))
+        self.refreshButton.clicked.connect(self.onRefresh)
+        self.refreshButton.move(1500, 820)
+        self.refreshButton.resize(270, 100)
 
     def UI(self):
         self.queryTextbox1.move(30, 5)
@@ -120,6 +122,13 @@ class MyWindow(QMainWindow):
         self.submitButton.move(1500, 700)
         self.submitButton.resize(270, 100)
 
+    def onRefresh(self):
+        self.queryTextbox1.clear()
+        self.queryTextbox2.clear()
+        self.queryOutput1.setText("Output Query Q1 :")
+        self.queryOutput2.setText("Output Query Q2 :")
+        self.queryExplain.setText("Explain for Output Query :")
+
     def onClick(self):
         if self.dbName != self.dbNameTextbox.toPlainText():
             try:
@@ -131,13 +140,7 @@ class MyWindow(QMainWindow):
                 self.error_dialog.showMessage(f"ERROR - {e}")
         if self.database is not None:
             try:
-                # A connection in need of explain.py's output result function
-                # def explain(self, query, query2):
-                # Query 1
-                # query, annotation = process(
-                #    self.database, self.queryTextbox1.toPlainText())
-                # self.queryOutput1.setText('\n'.join(query))
-                # self.queryExplain.setText('\n'.join(annotation))
+
                 explain_class = explain()
                 query, annotation = process(
                     self.database, self.queryTextbox1.toPlainText())
@@ -162,16 +165,7 @@ class MyWindow(QMainWindow):
 
                 self.queryOutput1.setText(query_str)
                 self.queryOutput2.setText(query_str2)
-                # self.queryOutput1.setText(query)
-                # self.queryOutput2.setText(query2)
-                # self.queryOutput1.setText(explanation[0])
-                # self.queryOutput2.setText(explanation[1])
 
-                # # Query 2
-                # query, annotation = process(self.database, self.queryTextbox2.toPlainText())
-                # self.queryOutput2.setText('\n'.join(query))
-                # self.queryExplain.setText('\n'.join(annotation))
-                # print(annotation[0][0])
             except Exception as e:
                 traceback.print_exc()
                 self.error_dialog.showMessage(f"ERROR - {e}")
@@ -187,48 +181,13 @@ def process(database, query):
         final_query_result.append(temp)
     raw_explanation = database.get_query_results(
         "explain (analyze true , format json)" + query)
-    # print(raw_explanation[0][0][0])
-    # print("--------------")
-    # print(raw_explanation[0][0][0]['Plan']['Plans'][0])
-    # print("--------------")
-    # print(raw_explanation[0][0][0]['Plan']['Plans'][1])
-    # print("--------------")
-    # print(raw_explanation[0][0][0]['Plan']['Plans'][1]['Plans'])
 
-    # for Plans in raw_explanation[0][0]:
-    #     print("i am working")
-    #     print(Plans['Plan']['Node Type'])
-    #     for PlansIns in Plans['Plan']['Plans']:
-    #         print(PlansIns['Node Type'])
-    #         # if no plans skip  .. unsure how to implement.
-    #         if (PlansIns['Plans'] == null):
-    #             continue
-    #         for x in Plans['Plans']:
-    #             print(x)
-
-    # for PlansIns in Plans['Plans']:
-    #   print(PlansIns['Node Type'])
 
     final_raw_explanation = []
     for i in raw_explanation:
         final_raw_explanation.append(i[0])
     return final_query_result, final_raw_explanation
-    # def init_conn(db_name):
-    #    db_uname, db_pass, db_host, db_port = import_config()
-    #    conn = open_db(db_name, db_uname, db_pass, db_host, db_port)
-    #    return conn
 
-    # def showError(self, errMessage, execption=None):
-    #    dialog = QMessageBox()
-    #    dialog.setStyleSheet("QLabel{min-width: 300px;}");
-    #    dialog.setWindowTitle("Error")
-    #    #dialog.setIcon(QMessageBox.Warning)
-    #    dialog.setText(errMessage)
-    #    if execption is not None:
-    #        dialog.setDetailedText(str(execption))
-    #    dialog.setStandardButtons(QMessageBox.Ok)
-    #    #dialog.buttonClicked.connect(cb)
-    #    dialog.exec_()
 
 
 def window():
