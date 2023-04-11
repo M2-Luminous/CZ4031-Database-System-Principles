@@ -5,9 +5,6 @@ class explain:
     # def _init_(self):
     #    self.count = 0
 
-
-
-
     def explain(self, database, query1, query2):
         print("working on explain")
 
