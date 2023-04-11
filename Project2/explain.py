@@ -116,9 +116,9 @@ class explain:
             
         for i in nodes_in_query2:
             if ("Gather" in i):
-                explanation += "Gather because parallel execution was enabledfor Query 2\n"
+                explanation += "Gather because parallel execution was enabled for Query 2\n"
         
-
+        
         if len(nodes_in_query1)!=0:
             explanation+="\nThese operations are unique to query 1:\n"  
             for i in nodes_in_query1:
