@@ -113,6 +113,12 @@ class explain:
         # add to explanation changes on the depth of the query plan
         if check_depth(split_node_types_query1)!=check_depth(split_node_types_query2):
             explanation += 'Query 1 has a depth of '+str(check_depth(split_node_types_query1))+' while Query 2 has a depth of '+str(check_depth(split_node_types_query2))+'.\n'
+        else:
+            explanation += 'Both Query 1 and 2 have a depth of '+str(check_depth(split_node_types_query1))+'.\n'
+        if len(split_node_types_query1)!=len(split_node_types_query2):
+            explanation+='Query 1 has '+str(len(split_node_types_query1))+' operations while Query 2 has '+str(len(split_node_types_query2))+' operations.\n'
+        else:
+            explanation+='Both Query 1 and 2 have '+str(len(split_node_types_query1)) +' operations.\n'
         
 
         # add explanation for Gather operation
