@@ -11,8 +11,15 @@ class explain:
             node_types_time = []
             node_types = []
             for Plans in raw_explanation[0][0]:
+                if 'Limit' in Plans['Plan']['Node Type']:
+                    node_types_time, node_types=get_node_helper(Plans['Plan']['Plans'][0])
+                    node_types_time[-1]='Limit\n'+node_types_time[-1]
+                    node_types[-1]='Limit\n'+node_types[-1]
                 # call the recursive function
-                node_types_time, node_types=get_node_helper(Plans['Plan'])
+                else:
+                    node_types_time, node_types=get_node_helper(Plans['Plan'])
+            print(node_types_time)
+            print(node_types)
             return node_types_time, node_types
         
         # This recursive function gets the node types and execution time in each depth
@@ -95,18 +102,18 @@ class explain:
             explanation += "No changes are made."
         # if no unique operations in query 1
         elif (node1 == ""):
-            explanation += node2 + "\n was added in query 2"
+            explanation += node2 + "\nwas added in query 2"
         # if no unique operations in query 1
         elif (node2 == ""):
-            explanation += node1 + "\n in query 1 was removed"
+            explanation += node1 + "\nwas added in query 1"
         # if unique operations in both query 1 and queryl 2
         else:
-            explanation += node1 + '\n in query 1 has now evolved to \n' + node2 + '\n in query 2.\n\n'
+            explanation += node1 + '\nin query 1 has now evolved to \n' + node2 + '\n in query 2.\n\n'
         
 
         # add to explanation changes on the depth of the query plan
         if check_depth(split_node_types_query1)!=check_depth(split_node_types_query2):
-            explanation += 'Query 1 has a depth of '+str(check_depth(split_node_types_query1))+' while Query 2 has a depth of '+str(check_depth(split_node_types_query2))+'.\n'
+            explanation += 'Query 1 has a depth of '+str(check_depth(split_node_types_query1))+' while Query 2 has a depth of '+str(check_depth(split_node_types_query2))+'.\n\n'
         
 
         same_operation_diff_depth=[]
@@ -130,10 +137,14 @@ class explain:
         for i in nodes_in_query1:
             if ("Gather" in i):
                 explanation += "\nGather because parallel execution was enable for Query 1\n"
+            if ("Limit" in i):
+                explanation += "\nLimit because number of tuples output is limited for Query 1\n"
             
         for i in nodes_in_query2:
             if ("Gather" in i):
                 explanation += "Gather because parallel execution was enabled for Query 2\n"
+            if ("Limit" in i):
+                explanation += "\nLimit because number of tuples output is limited for Query 2\n"
         
         
         # add to explanation unique operations in query 1
