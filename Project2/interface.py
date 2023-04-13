@@ -151,17 +151,16 @@ class MyWindow(QMainWindow):
                     self.database, self.queryTextbox1.toPlainText(), self.queryTextbox2.toPlainText())
                 self.queryExplain.setText(explanation)
                 # print(query)
-                print(type(query))
                 query_str = ''
                 query_str2 = ''
                 j=0
                 for x in query:
                     query_str += '\n' + x
-                    if len(query_str)>1000:
+                    if len(query_str)>10000:
                         break
                 for x in query2:
                     query_str2 += '\n' + x
-                    if len(query_str2)>1000:
+                    if len(query_str2)>10000:
                         break
 
                 self.queryOutput1.setText(query_str)

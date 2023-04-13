@@ -96,54 +96,62 @@ class explain:
         node2 = '\n'.join(nodes_in_query2)
         # describe changes from query 1 to query 2
         # if no unique operations in two queries
-        if (node1 == "" and node2 == ""):
-            explanation += "No changes are made."
-        # if no unique operations in query 1
-        elif (node1 == ""):
-            explanation += node2 + "\nwas added in query 2\n"
-        # if no unique operations in query 1
-        elif (node2 == ""):
-            explanation += node1 + "\nwas added in query 1\n"
-        # if unique operations in both query 1 and queryl 2
-        else:
-            explanation += node1 + '\nin query 1 has now evolved to \n' + node2 + '\n in query 2.\n\n'
+
+        # if (node1 == "" and node2 == ""):
+        #     explanation += "No changes are made."
+        # # if no unique operations in query 1
+        # elif (node1 == ""):
+        #     explanation += node2 + "\nwas added in query 2\n"
+        # # if no unique operations in query 1
+        # elif (node2 == ""):
+        #     explanation += node1 + "\nwas added in query 1\n"
+        # # if unique operations in both query 1 and queryl 2
+        # else:
+        #     explanation += node1 + '\nin query 1 has now evolved to \n' + node2 + '\n in query 2.\n\n'
         
 
         # add to explanation changes on the depth of the query plan
         if check_depth(split_node_types_query1)!=check_depth(split_node_types_query2):
-            explanation += 'Query 1 has a depth of '+str(check_depth(split_node_types_query1))+' while Query 2 has a depth of '+str(check_depth(split_node_types_query2))+'.\n\n'
+            explanation += 'Query 1 has a depth of '+str(check_depth(split_node_types_query1))+' while Query 2 has a depth of '+str(check_depth(split_node_types_query2))+'.\n'
         
 
         # add explanation for Gather operation
         for i in split_node_types_query1:
-            print(i)
             if ("Gather" in i):
-                explanation += "\nGather because parallel execution was used for Query 1"
+                explanation += "\nGather operation is executed because parallel execution was used for Query 1."
             if ("Limit" in i):
-                explanation += "\nLimit because number of tuples output is limited for Query 1\n"
+                explanation += "\nLimit because number of tuples output is limited for Query 1."
             
         for i in split_node_types_query2:
             if ("Gather" in i):
-                explanation += "Gather because parallel execution was used for Query 2"
+                explanation += "\nGather operation is executed because parallel execution was used for Query 2."
             if ("Limit" in i):
-                explanation += "\nLimit because number of tuples output is limited for Query 2\n"
-
+                explanation += "\nLimit because number of tuples output is limited for Query 2."
+        
+        explanation+='\n\n'
         same_operation_diff_depth=[]
         temp_nodes_in_query1=copy.deepcopy(nodes_in_query1)
         temp_nodes_in_query2=copy.deepcopy(nodes_in_query2)
+        n2=0
+        max_n2=0
         for i in temp_nodes_in_query1:
+            n2=0
             for j in temp_nodes_in_query2:                
                 try:
                     temp1=i.split('->')[1]
                     temp2=j.split('->')[1]
                 except:
+                    n2+=1
                     continue
-                if (temp1==temp2) and temp1 not in same_operation_diff_depth:
+                if (temp1==temp2) and (temp1+str(n2)) not in same_operation_diff_depth:
                     nodes_in_query1.remove(i)
                     nodes_in_query2.remove(j)
-                    same_operation_diff_depth.append(temp1)
-                    explanation += temp1 + ' in Query 1 executed at the depth of '+str(check_depth([i]))+' while this is executed in the depth of '+str(check_depth([j]))+' in Query 2.\n'
+                    same_operation_diff_depth.append(temp1+str(n2))
+                    explanation += temp1 + ' in Query 1 executed at the depth of '+str(check_depth([i]))+', while being executed in the depth of '+str(check_depth([j]))+' in Query 2.\n'
                     break
+                n2+=1
+
+            
         
 
         
