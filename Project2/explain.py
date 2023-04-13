@@ -129,7 +129,7 @@ class explain:
         # add explanation for Gather operation
         for i in nodes_in_query1:
             if ("Gather" in i):
-                explanation += "Gather because parallel execution was enable for Query 1\n"
+                explanation += "\nGather because parallel execution was enable for Query 1\n"
             
         for i in nodes_in_query2:
             if ("Gather" in i):

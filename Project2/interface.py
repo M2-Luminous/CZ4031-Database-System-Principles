@@ -137,6 +137,7 @@ class MyWindow(QMainWindow):
                 self.dbName = self.dbNameTextbox.toPlainText()
                 self.dbNameLabel.setText(f"Current DB Name: {self.dbName}")
             except Exception as e:
+                traceback.print_exc()
                 self.error_dialog.showMessage(f"ERROR - {e}")
         if self.database is not None:
             try:
