@@ -61,6 +61,7 @@ class explain:
                         max_depth=len(spaces)/4+1
             return int(max_depth)
 
+        # Compare both query and output the differences of both query based on the three components: select, where and from
         def compare_query(query1,query2):
             difference_select=[]
             difference_where=[]
