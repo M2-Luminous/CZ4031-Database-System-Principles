@@ -61,6 +61,58 @@ class explain:
                         max_depth=len(spaces)/4+1
             return int(max_depth)
 
+        def compare_query(query1,query2):
+            difference_select=[]
+            difference_where=[]
+            difference_from=[]
+            query1_temp1=query1.split(" from ")
+            for i in query1_temp1[1].split(" where "):
+                query1_temp1.append(i)
+            del query1_temp1[1]
+            query2_temp1=query2.split(" from ")
+            for i in query2_temp1[1].split(" where "):
+                query2_temp1.append(i)
+            del query2_temp1[1]
+            if query1_temp1[0] in query2_temp1[0] and query2_temp1[0] in query1_temp1[0]:
+                difference_select=[]
+            else:
+                difference_select=[query1_temp1[0].replace("select ","").split(', '),query2_temp1[0].replace("select ","").split(', ')]
+                print("removing select")
+                difference_select=remove_duplicates(difference_select)
+
+            if query1_temp1[1] in query2_temp1[1] and query2_temp1[1] in query1_temp1[1]:
+                difference_where=[]
+            else:
+                difference_where=[query1_temp1[1].split(', '),query2_temp1[1].split(', ')]
+                print("removing select")
+                difference_where=remove_duplicates(difference_where)
+
+            if query1_temp1[2] in query2_temp1[2] and query2_temp1[2] in query1_temp1[2]:
+                difference_from=[]
+            else:
+                difference_from=[query1_temp1[2].split(' and '),query2_temp1[2].split(' and ')]
+                print("removing select")
+                difference_from=remove_duplicates(difference_from)
+            return [difference_select,difference_where,difference_from]
+
+        # Given a list of two list, remocve duplicates
+        def remove_duplicates(list):
+            print("remove duplicate"+str(list))
+            compare0=list[0]
+            compare1=list[1]
+            final_1=[]
+            final_2=[]
+            for i in compare0:
+                if i in compare1:
+                    continue
+                else:
+                    final_1.append(i)
+            for j in compare1:
+                if j in compare0:
+                    continue
+                else:
+                    final_2.append(j)
+            return [final_1,final_2]
         # get raw explanation of query 1
         raw_explanation_query1 = database.get_query_results(
             "explain (analyze true , format json) "+query1)
@@ -68,12 +120,10 @@ class explain:
         raw_explanation_query2 = database.get_query_results(
             "explain (analyze true , format json) "+query2)
         # add to explanation the operations performed in query 1
-        print("node types in query 1:")
         node_types_time_query1, node_types_query1 = get_node_types(raw_explanation_query1)
         explanation="These operations are performed on query 1:\n"
         explanation += node_types_time_query1[-1] + "\n\n"
         # add to explanation the operations performed in query 2
-        print("node types in query 2:")
         node_types_time_query2, node_types_query2 = get_node_types(raw_explanation_query2)
         explanation +="These operations are performed on query 2:\n"
         explanation += node_types_time_query2[-1] + "\n\n"
@@ -94,21 +144,7 @@ class explain:
         # convert list to string
         node1 = '\n'.join(nodes_in_query1)
         node2 = '\n'.join(nodes_in_query2)
-        # describe changes from query 1 to query 2
-        # if no unique operations in two queries
-
-        # if (node1 == "" and node2 == ""):
-        #     explanation += "No changes are made."
-        # # if no unique operations in query 1
-        # elif (node1 == ""):
-        #     explanation += node2 + "\nwas added in query 2\n"
-        # # if no unique operations in query 1
-        # elif (node2 == ""):
-        #     explanation += node1 + "\nwas added in query 1\n"
-        # # if unique operations in both query 1 and queryl 2
-        # else:
-        #     explanation += node1 + '\nin query 1 has now evolved to \n' + node2 + '\n in query 2.\n\n'
-        
+       
 
         # add to explanation changes on the depth of the query plan
         if check_depth(split_node_types_query1)!=check_depth(split_node_types_query2):
@@ -125,21 +161,24 @@ class explain:
         for i in split_node_types_query1:
             if ("Gather" in i):
                 explanation += "\nGather operation is executed because parallel execution was used for Query 1."
+                nodes_in_query1.remove(i)
             if ("Limit" in i):
-                explanation += "\nLimit because number of tuples output is limited for Query 1."
+                explanation += "\nLimit because limit clause is added for Query 1."
+                nodes_in_query1.remove(i)
             
         for i in split_node_types_query2:
             if ("Gather" in i):
                 explanation += "\nGather operation is executed because parallel execution was used for Query 2."
+                nodes_in_query2.remove(i)
             if ("Limit" in i):
-                explanation += "\nLimit because number of tuples output is limited for Query 2."
+                explanation += "\nLimit because limit clause is added for Query 2."
+                nodes_in_query2.remove(i)
         
         explanation+='\n\n'
         same_operation_diff_depth=[]
         temp_nodes_in_query1=copy.deepcopy(nodes_in_query1)
         temp_nodes_in_query2=copy.deepcopy(nodes_in_query2)
         n2=0
-        max_n2=0
         for i in temp_nodes_in_query1:
             n2=0
             for j in temp_nodes_in_query2:                
@@ -156,11 +195,6 @@ class explain:
                     explanation += temp1 + ' in Query 1 executed at the depth of '+str(check_depth([i]))+', while being executed in the depth of '+str(check_depth([j]))+' in Query 2.\n'
                     break
                 n2+=1
-
-            
-        
-
-        
         
         # add to explanation unique operations in query 1
         if len(nodes_in_query1)!=0:
@@ -172,6 +206,71 @@ class explain:
             explanation+="\nThese operations are unique to query 2:\n"
             for i in nodes_in_query2:
                 explanation+=i+'\n'
+
+        explanation+='\n'
+        # Attempt to explain differences in query for the differences in the query plan.
+        query_difference=compare_query(query1,query2)
+        if len(query_difference[0])!=0:
+            explanation+='This could be because in the select clause, '
+            if len(query_difference[0][0])!=0:
+                explanation+='Query 1 is selecting '
+                for i in query_difference[0][0]:
+                    explanation+=i+', '
+                explanation=explanation[0,-3]
+                if len(query_difference[0][1])!=0:
+                    explanation+=" while Query 2 is selecting "
+                    for i in query_difference[0][1]:
+                        explanation+=i+', '
+                    explanation=explanation[0,-3]
+                explanation+='.\n\n'
+            else:
+                if len(query_difference[0][1])!=0:
+                    explanation+="This could be because in the select clause, Query 2 is selecting "
+                    for i in query_difference[0][1]:
+                        explanation+=i+', '
+                    explanation=explanation[0,-3]
+
+        if len(query_difference[1])!=0:
+            explanation+='This could be because in the from clause, '
+            if len(query_difference[1][0])!=0:
+                explanation+='Query 1 is using '
+                for i in query_difference[1][0]:
+                    explanation+=i+', '
+                explanation=explanation[:-2]
+                if len(query_difference[1][1])!=0:
+                    explanation+=" while Query 2 is using "
+                    for i in query_difference[0][1]:
+                        explanation+=i+', '
+                    explanation=explanation[:-2]
+                explanation+='.\n\n'
+            else:
+                if len(query_difference[1][1])!=0:
+                    explanation+="This could be because in the from clause, Query 2 is using "
+                    for i in query_difference[1][1]:
+                        explanation+=i+', '
+                    explanation=explanation[:-2]
+
+        if len(query_difference[2])!=0:
+            explanation+='This could be because '
+            if len(query_difference[2][0])!=0:
+                explanation+='the conditions in Query 1 are '
+                for i in query_difference[2][0]:
+                    explanation+=i+', '
+                explanation=explanation[:-2]
+                if len(query_difference[2][1])!=0:
+                    explanation+=" while in Query 2, they are "
+                    for i in query_difference[2][1]:
+                        explanation+=i+', '
+                    explanation=explanation[:-2]
+                explanation+='.\n\n'
+            else:
+                if len(query_difference[2][1])!=0:
+                    explanation+="the conditions in Query 2 are "
+                    for i in query_difference[2][1]:
+                        explanation+=i+', '
+                    explanation=explanation[:-2]
+
+                
         return explanation
     
 
