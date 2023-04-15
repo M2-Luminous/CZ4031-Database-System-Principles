@@ -190,17 +190,5 @@ def process(database, query):
 
 
 
-def window():
-    app = QApplication(sys.argv)
-    win = MyWindow()
-
-    win.show()
-    sys.exit(app.exec_())
 
 
-def main():
-    window()
-
-
-if __name__ == '__main__':
-    main()
